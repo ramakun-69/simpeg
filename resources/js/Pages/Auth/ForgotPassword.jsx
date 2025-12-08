@@ -46,7 +46,7 @@ export default function ForgotPassword() {
                                     type="text"
                                     onChange={(e) => setData('identity', e.target.value)}
                                     className="bg-neutral-50 radius-12"
-                                    placeholder={t('Email Or Username')}
+                                    placeholder={t('NIP')}
                                     autoComplete="off"
                                     errorMessage={errors.identity}
                                 />

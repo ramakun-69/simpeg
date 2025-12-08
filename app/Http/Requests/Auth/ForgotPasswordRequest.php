@@ -44,8 +44,7 @@ class ForgotPasswordRequest extends FormRequest
                 case 'identity':
                     $dataValidate[$key] = [
                         ($this->fill[$key] == 1) ? 'required' : 'nullable',
-                        'string',
-                        new EmailOrUsername(),
+                        'string'
                     ];
                     break;
             }

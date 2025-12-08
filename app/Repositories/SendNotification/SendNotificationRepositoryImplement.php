@@ -20,7 +20,7 @@ class SendNotificationRepositoryImplement extends Eloquent implements SendNotifi
     public function sendWhatsappMessage($number, $placeholders, $messageFile)
     {
         $message = $this->buildMessage($placeholders, $messageFile);
-        Notification::route('whatsapp', $number)->notifyNow(new WhatsappNotification($message, $number));
+        (Notification::route('whatsapp', $number)->notifyNow(new WhatsappNotification($message, $number)));
     }
     public function sendEmailMessageWithAttachment($user, $placeholders, $messageFile, $subject = null, array $attachments = [])
     {

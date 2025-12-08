@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Employee;
 use App\Traits\ResponseOutput;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -26,10 +27,9 @@ class CForgotPassword extends Controller
     public function store(ForgotPasswordRequest $request)
     {
         return $this->safeInertiaExecute(function () use ($request) {
-            $user = User::where('email', $request->identity)
-                ->orWhere('username', $request->identity)
+            $user = User::Where('username', $request->identity)
                 ->first();
-
+            $employee = Employee::where('user_id', $user->id)->first();
             if (! $user) {
                 return back()
                     ->withErrors(['identity' => __('auth.failed')])
@@ -44,7 +44,7 @@ class CForgotPassword extends Controller
             ]);
 
             $this->sendNotificationRepository->sendWhatsappMessage(
-                $user->phone,
+                $employee->phone,
                 compact('otp'),
                 'otp-message.txt'
             );
