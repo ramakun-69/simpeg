@@ -28,8 +28,14 @@ class CLogin extends Controller
 
             if (Auth::attempt($credentials, $request->boolean('remember'))) {
                 // dd(Auth::check());   
-                return redirect()->intended(route('dashboard'))
-                    ->with('success', __('Login successful'));
+                $user = Auth::user();
+                if (in_array($user->role, ['Administrator', 'Superadmin'])) {
+                    return redirect()->intended(route('dashboard'))
+                        ->with('success', __('Login successful'));
+                } else {
+                    return redirect()->route('profile.index')
+                        ->with('success', __('Login successful'));
+                }
             }
             return redirect()->back()
                 ->withErrors(['username' => __('auth.failed')])

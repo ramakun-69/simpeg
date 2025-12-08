@@ -125,16 +125,38 @@ class CEmployee extends Controller
             $data = $request->validated();
             $user = User::find($data['user_id']);
             $this->appRepository->updateOneModelWithFile($user, [], 'photo', 'images/user');
-            return back()->with('success',__("Photo Changed Successfully"));
+            return back()->with('success', __("Photo Changed Successfully"));
         });
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(EmployeeDataRequest $request, Employee $employee)
     {
-        //
+        return $this->safeInertiaExecute(function () use ($request, $employee) {
+            $data = $request->validated();
+            $user = $employee->user;
+
+            // Update password jika ada
+            if (!empty($data['password'])) {
+                $user->password = bcrypt($data['password']);
+            }
+
+            // Fields milik User
+            $userFields = ['email'];
+            foreach ($userFields as $field) {
+                if (isset($data[$field])) {
+                    $user->$field = $data[$field];
+                    unset($data[$field]);
+                }
+            }
+            $user->save();
+            unset($data['password_confirmation'], $data['password']);
+            $this->appRepository->updateOneModel($employee, $data);
+
+            return back()->with('success', __("Data Updated Successfully"));
+        });
     }
 
     /**

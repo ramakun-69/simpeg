@@ -42,6 +42,8 @@ export default function Index({ employee, positions, ranks, grades }) {
         address: employee?.address ?? '',
         employee_type: employee?.employee_type ?? '',
         division: employee?.division ?? '',
+        password: "",
+        password_confirmation: ""
     });
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -62,6 +64,7 @@ export default function Index({ employee, positions, ranks, grades }) {
                     const success = page.props?.flash?.success;
                     if (error) notifyError(error, 'bottom-center');
                     notifySuccess(success, 'bottom-center');
+
                 },
                 onError: (error) => {
                     notifyError(error, 'bottom-center')
@@ -69,6 +72,7 @@ export default function Index({ employee, positions, ranks, grades }) {
             });
         }
     };
+    const isOwnProfile = auth.user.id === employee.user_id;
     return (
         <AppLayout>
             <div className="row gy-4">
@@ -108,7 +112,7 @@ export default function Index({ employee, positions, ranks, grades }) {
                                 </div>
                                 {/* Upload Image End */}
                                 <h6 className="mb-0 mt-16">{employee?.name}</h6>
-                                <span className="text-secondary-light mb-16">{auth?.user?.email}</span>
+                                <span className="text-secondary-light mb-16">{employee?.user?.email}</span>
                             </div>
                             <div className="mt-24">
                                 <h6 className="text-xl mb-16">{t('Employee Info')}</h6>
@@ -267,22 +271,24 @@ export default function Index({ employee, positions, ranks, grades }) {
                                         {t('Training History')}
                                     </Button>
                                 </li>
-                                <li className="nav-item" role="presentation">
-                                    <Button
-                                        className="nav-link d-flex align-items-center px-24"
-                                        id="pills-change-password-tab"
-                                        data-bs-toggle="pill"
-                                        data-bs-target="#pills-change-password"
-                                        type="button"
-                                        role="tab"
-                                        aria-controls="pills-change-password"
-                                        aria-selected="false"
-                                        onClick={() => setActiveTab("change-password")}
-                                        tabIndex={-1}
-                                    >
-                                        {t('Change Password')}
-                                    </Button>
-                                </li>
+                                {isOwnProfile && (
+                                    <li className="nav-item" role="presentation">
+                                        <Button
+                                            className="nav-link d-flex align-items-center px-24"
+                                            id="pills-change-password-tab"
+                                            data-bs-toggle="pill"
+                                            data-bs-target="#pills-change-password"
+                                            type="button"
+                                            role="tab"
+                                            aria-controls="pills-change-password"
+                                            aria-selected="false"
+                                            onClick={() => setActiveTab("change-password")}
+                                            tabIndex={-1}
+                                        >
+                                            {t('Change Password')}
+                                        </Button>
+                                    </li>
+                                )}
                             </ul>
 
 
@@ -377,6 +383,7 @@ export default function Index({ employee, positions, ranks, grades }) {
                                                     placeholder={t('Password')}
                                                     autoComplete="off"
                                                     errorMessage={errors.password}
+                                                    value={data?.password}
                                                 />
                                                 <span
                                                     className={`toggle-password cursor-pointer position-absolute end-0 translate-middle-y ${errors.password ? 'me-32' : 'me-16'} text-secondary-light`}
@@ -403,7 +410,8 @@ export default function Index({ employee, positions, ranks, grades }) {
                                                     type={confirmPasswordVisible ? 'text' : 'password'}
                                                     onChange={(e) => setData('password_confirmation', e.target.value)}
                                                     className='bg-neutral-50 radius-12'
-                                                    id='password'
+                                                    id='password_confirmation'
+                                                    value={data?.password_confirmation}
                                                     placeholder={t('Confirm Password')}
                                                     autoComplete="off"
                                                     errorMessage={errors.password_confirmation}
@@ -431,7 +439,7 @@ export default function Index({ employee, positions, ranks, grades }) {
                                                 ...data,
                                                 _method: 'PUT',
                                             }));
-                                            post(route('profile.update', auth?.user?.id), {
+                                            put(route('master-data.employees.update', employee.id), {
                                                 onSuccess: (page) => {
                                                     const error = page.props?.flash?.error;
                                                     const success = page.props?.flash?.success;

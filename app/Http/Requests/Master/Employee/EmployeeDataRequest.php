@@ -19,6 +19,8 @@ class EmployeeDataRequest extends FormRequest
         'address' => 1,
         'employee_type' => 1,
         'division' => 1,
+        'password' => 0,
+        'password_confirmation' => 0
     ];
     /**
      * Determine if the user is authorized to make this request.
@@ -49,14 +51,21 @@ class EmployeeDataRequest extends FormRequest
     public function rules(): array
     {
         $dataValidate = [];
+        if ($this->password || $this->password_confirmation) {
+            $this->fill['password'] = 1;
+            $this->fill['password_confirmation'] = 1;
+        }
         foreach (array_keys($this->fill) as $key) {
             $dataValidate[$key] = ($this->fill[$key] == 1) ? 'required' : 'nullable';
             switch ($key) {
+                case 'password':
+                    $dataValidate[$key] .= '|min:8|confirmed';
+                    break;
                 case 'email':
-                    $dataValidate[$key] .= '|email:dns|unique:users,email,'. $this->user_id;
+                    $dataValidate[$key] .= '|email:dns|unique:users,email,' . $this->user_id;
                     break;
                 case 'nip':
-                    $dataValidate[$key] .= '|unique:employees,nip,'. $this->id;
+                    $dataValidate[$key] .= '|unique:employees,nip,' . $this->id;
                     break;
                 case 'phone':
                     $dataValidate[$key] .= '|phone:AUTO,ID';

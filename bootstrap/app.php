@@ -1,6 +1,7 @@
 <?php
 
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -24,6 +25,12 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectUsersTo(
+            fn(Request $request) =>
+            in_array($request->user()?->role, ['Administrator', 'Superadmin'])
+                ? route('dashboard')
+                : route('profile.index')
+        );
         $middleware->web(append: [
             LocalizationMiddleware::class,
             HandleInertiaRequests::class,

@@ -45,6 +45,7 @@ export default function EmployeeDataForm({ data, setData, errors, setError, clea
                         className="form-control"
                         autoComplete="off"
                         onChange={(e) => setData('nip', e.target.value)}
+                        readOnly={!!data?.id}
                         placeholder={t('Enter Attribute', { 'attribute': t('NIP') })}
                         value={data?.nip}
                         errorMessage={errors?.nip} />

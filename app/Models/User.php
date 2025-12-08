@@ -5,12 +5,13 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use Illuminate\Support\Facades\File;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -53,14 +54,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function getPhoto()
-    {
-        if ($this->photo && File::exists(storage_path("app/public/" . $this->photo))) {
-            return url("storage/" . $this->photo);
-        }
-
-        return asset('/assets/images/users/user-default.jpg');
-    }
+ 
     public function getPhotoAttribute($value)
     {
         if ($value && File::exists(storage_path("app/public/" . $value))) {

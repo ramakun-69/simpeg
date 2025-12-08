@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user ? array_merge(
                     $user->toArray(),
                     [
-                        'photo' => $user->getPhoto()
+                        'photo' => $user->photo
                     ]
                 ) : null,
                 'role' => $user?->roles->map(function ($role) {

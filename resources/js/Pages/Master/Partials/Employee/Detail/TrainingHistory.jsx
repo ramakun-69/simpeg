@@ -86,7 +86,7 @@ export default function TrainingHistory({ employee }) {
         {
             name: t('Training Hours'),
             cell: row => (
-                <span span > {`${row?.training_hours} ${t('Hours')}`}</span >
+                <span> {`${row?.training_hours} ${t('Hours')}`}</span >
             ),
             width: "200px",
             sortable: true,

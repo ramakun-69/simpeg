@@ -19,6 +19,7 @@ export default function Navbar({ sidebarControl, mobileMenuControl, sidebarActiv
             post(route('logout'));
         })
     }
+  
    
     const handleChangeLanguage = (e) => {
         const newLang = e.target.value;
@@ -36,7 +37,7 @@ export default function Navbar({ sidebarControl, mobileMenuControl, sidebarActiv
 
     const { user } = usePage().props.auth;
     const { hasAnyRole } = useRole();
-     console.log(user?.photo)
+     console.log(user)
     return (
         <>
             <div className='navbar-header'>
@@ -44,7 +45,7 @@ export default function Navbar({ sidebarControl, mobileMenuControl, sidebarActiv
                     <div className='col-auto'>
                         <div className='d-flex flex-wrap align-items-center gap-4'>
 
-                            {hasAnyRole(['`Admin`istrator','Superadmin']) && (
+                            {hasAnyRole(['Administrator','Superadmin']) && (
                                 <>
                                     <button
                                         type='button'
@@ -195,7 +196,7 @@ export default function Navbar({ sidebarControl, mobileMenuControl, sidebarActiv
                                         <li>
                                             <Link
                                                 className='dropdown-item text-black px-0 py-8 hover-bg-transparent hover-text-primary d-flex align-items-center gap-3'
-                                                href="#" >
+                                                href={route('profile.index')} >
                                                 <Icon
                                                     icon='solar:user-linear'
                                                     className='icon text-xl'

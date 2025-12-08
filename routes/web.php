@@ -27,7 +27,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('employees/change-photo', [CEmployee::class, 'changePhoto'])
             ->name('employees.change-photo');
 
-        Route::resource('employees', CEmployee::class);
+        Route::resource('employees', CEmployee::class)->middleware('role:Superadmin|Administrator');
 
 
         // Jabatan

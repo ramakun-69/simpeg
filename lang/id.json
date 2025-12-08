@@ -262,6 +262,7 @@
     "Certificate Date Must Be A Valid Date" : "Tanggal Sertifikat Harus Berupa Tanggal Yang Valid",
     "Training Certificate File May Not Be Greater Than 10MB" : "File Sertifikat Tidak Boleh Lebih Dari 10MB",
     "Certificate Must Be A PDF" : "Sertifikat Harus Berupa PDF",
-    "Logged out successfully" : "Berhasil Keluar"
+    "Logged out successfully" : "Berhasil Keluar",
+    "Data Updated Successfully" : "Data Berhasil Diperbarui"
 
 }
