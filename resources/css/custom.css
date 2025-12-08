@@ -1,0 +1,13 @@
+.dashboard-main.fullscreen {
+    margin-left: 0; /* hapus offset sidebar */
+    width: 100%;
+    transition: none; /* optional agar tidak ada animasi sisa */
+}
+.react-select.is-invalid .select__control {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 1px #dc3545 !important;
+}
+
+.react-select .select__control--is-focused.is-invalid {
+    border-color: #dc3545 !important;
+}
