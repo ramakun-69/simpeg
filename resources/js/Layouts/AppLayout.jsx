@@ -139,7 +139,7 @@ const AppLayout = ({ children }) => {
                 <footer className='d-footer'>
                     <div className='row align-items-center justify-content-between'>
                         <div className='col-auto'>
-                            <p className='mb-0'>© {new Date().getFullYear()} Inventory App. All Rights Reserved.</p>
+                            <p className='mb-0'>© {new Date().getFullYear()} SIMPEG. All Rights Reserved.</p>
                         </div>
                     </div>
                 </footer>
