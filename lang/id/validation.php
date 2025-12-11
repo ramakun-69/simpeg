@@ -315,7 +315,11 @@ return [
         'end_date' => 'tanggal selesai',
         'training_hours' => 'jumlah jam pelatihan',
         'training_name' => 'nama diklat',
-        'division' => 'bagian'
-
+        'division' => 'bagian',
+        'status_reason' => "alasan",
+        'letter_document'=> 'dokumen surat',
+        'letter_date'=> 'tanggal surat',
+        'letter_number'=> 'nomor surat',
+        'letter_subject'=> 'perihal'
     ],
 ];

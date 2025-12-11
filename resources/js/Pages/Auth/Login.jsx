@@ -8,11 +8,16 @@ import TextInput from "../../src/components/ui/TextInput";
 import CheckBoxInput from "../../src/components/ui/CheckBoxInput";
 import { useTranslation } from "react-i18next";
 import { notifyError, notifySuccess } from "../../src/components/ui/Toastify";
+import ReCAPTCHA from "react-google-recaptcha";
+import ErrorMessage from "../../src/components/ui/ErrorMessage";
+
+
 export default function Login({ ...props }) {
     const { t } = useTranslation();
     const { data, setData, post, processing, errors, clearErrors } = useForm({
         username: '',
         password: '',
+        gRecaptcha: ''
     });
     const [showPassword, setShowPassword] = useState(false);
     const { settings, flash } = usePage().props;
@@ -32,6 +37,9 @@ export default function Login({ ...props }) {
             notifySuccess(flash.success, 'bottom-center')
         }
     }, [flash.error, flash.success]);
+    const handleCaptchaChange = (value) => {
+        setData('gRecaptcha', value)
+    }
     return <>
         <AuthLayout>
             <div className='auth-right py-32 px-24 d-flex flex-column justify-content-center'>
@@ -104,6 +112,12 @@ export default function Login({ ...props }) {
                                 </Link>
                             </div>
                         </div>
+                        <ReCAPTCHA
+                            sitekey={import.meta.env.VITE_RECAPTCHA_SITEKEY}
+                            onChange={handleCaptchaChange}
+                        />
+                     
+                        {errors.gRecaptcha && <ErrorMessage message={errors.gRecaptcha} />}
                         <Button type="submit" className="btn btn-primary text-sm px-12 py-16 w-100 radius-12 mt-32 d-flex align-items-center justify-content-center" isLoading={processing}>
                             {t('Sign In')}
                         </Button>

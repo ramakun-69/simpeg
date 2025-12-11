@@ -11,6 +11,7 @@ class LoginRequest extends FormRequest
     protected $fill = [
         'username' => 1,
         'password' => 1,
+        'gRecaptcha' => 1,
         'remember' => 0,
     ];
     /**
@@ -47,6 +48,9 @@ class LoginRequest extends FormRequest
                 case 'password':
                     $dataValidate[$key] .= '|min:6';
                     break;
+                case 'gRecaptcha':
+                    $dataValidate[$key] .= '|captcha';
+                    break;
             }
         }
         return $dataValidate;
@@ -58,6 +62,7 @@ class LoginRequest extends FormRequest
         return [
             'username.required' => __('NIP is required'),
             'password.required' => __('Password is required'),
+            'gRecaptcha.required' => __("Please verify that you are not a robot.")
         ];
     }
 }

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Requests\Master;
+namespace App\Http\Requests\Master\Employee;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PositionRequest extends FormRequest
+class StatusChangeRequest extends FormRequest
 {
     protected $fill = [
-        'id' => 0,
-        'position_name' => 1,
-
+        'nip' => 1,
+        'status_reason' => 0,
+        'status' => 1,
     ];
     /**
      * Determine if the user is authorized to make this request.
@@ -18,27 +18,21 @@ class PositionRequest extends FormRequest
     {
         return true;
     }
-    protected function prepareForValidation()
-    {
-        $trimmed = [];
 
-        foreach ($this->fill as $key) {
-            if ($this->has($key)) {
-                $trimmed[$key] = is_string($this->input($key)) ? trim($this->input($key)) : $this->input($key);
-            }
-        }
-
-        $this->merge($trimmed);
-    }
-
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         $dataValidate = [];
+        if ($this->status == 'Inactive') {
+            $this->fill['status_reason'] = 1;
+        }
         foreach (array_keys($this->fill) as $key) {
             $dataValidate[$key] = ($this->fill[$key] == 1) ? 'required' : 'nullable';
-            
         }
-
         return $dataValidate;
     }
 }

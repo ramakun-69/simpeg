@@ -14,25 +14,45 @@ class CIndex extends Controller
     use ResponseOutput;
     public function index()
     {
-        $employees = Employee::with('grade')->get();
+        // Ambil semua employee sekali saja
+        $employees = Employee::with(['grade', 'position'])->get();
 
-        // Rekap per divisi
-        $divisionCounts = $employees->groupBy('division')->map(fn($group) => $group->count());
+        // === Rekap Berdasarkan Division ===
+        $divisionCounts = $employees
+            ->groupBy(fn($emp) => $emp->division ?: 'N/A')
+            ->map->count();
 
-        // Rekap per gender
-        $genderCounts = $employees->groupBy('gender')->map(fn($group) => $group->count());
+        // === Rekap Berdasarkan Gender ===
+        $genderCounts = $employees
+            ->groupBy(fn($emp) => $emp->gender ?: 'N/A')
+            ->map->count();
 
-        // Rekap per grade / golongan
-        $gradeCounts = $employees->groupBy(fn($emp) => $emp->grade?->name ?? 'N/A')
-            ->map(fn($group) => $group->count());
+        // === Rekap Berdasarkan Grade / Golongan ===
+        $gradeCounts = $employees
+            ->groupBy(fn($emp) => $emp->grade?->name ?? 'N/A')
+            ->map->count();
+
+        // === Jumlah Auditor ===
+        $auditorCount = $employees->filter(
+            fn($emp) => str_contains(strtoupper($emp->position?->name), 'AUDITOR')
+        )->count();
+
+        // === Jumlah PPUPD ===
+        $ppupdCount = $employees->filter(
+            fn($emp) => str_contains(strtoupper($emp->position?->name), 'PPUPD')
+                || str_contains(strtoupper($emp->position?->name), 'P2UPD')
+        )->count();
 
         return inertia('Index', [
             'divisionCounts' => $divisionCounts,
-            'genderCounts' => $genderCounts,
-            'gradeCounts' => $gradeCounts,
-            'users' => User::get(),
+            'genderCounts'   => $genderCounts,
+            'gradeCounts'    => $gradeCounts,
+            'employees'          => $employees,
+            'auditorCount'   => $auditorCount,
+            'ppupdCount'     => $ppupdCount,
         ]);
     }
+
 
     public function setLanguage(Request $request)
     {

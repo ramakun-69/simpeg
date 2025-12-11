@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasUuids;
     protected $guarded = [];
     protected $keyType = 'string';
     public $incrementing = false;

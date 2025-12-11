@@ -7,8 +7,7 @@ import Chart from "react-apexcharts";
 
 export default function Index() {
     const { t } = useTranslation();
-    const { users, divisionCounts, genderCounts, gradeCounts } = usePage().props;
-
+    const { employees, divisionCounts, genderCounts, gradeCounts, auditorCount, ppupdCount } = usePage().props;
     const createPieOptions = (labels) => ({
         labels: labels.map(label => t(label)),
         legend: { position: "bottom" },
@@ -36,7 +35,7 @@ export default function Index() {
         <AppLayout>
             <Breadcrumb title={t("Dashboard")} />
 
-            <div className="row row-cols-xxxl-3 row-cols-lg-2 row-cols-sm-1 gy-4 mb-50">
+            <div className="row row-cols-xxxl-3 row-cols-lg-3e row-cols-sm-1 gy-4 mb-50">
 
                 {/* Total Users */}
                 <div className="col">
@@ -44,8 +43,38 @@ export default function Index() {
                         <div className="card-body p-20">
                             <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
                                 <div>
-                                    <p className="fw-medium text-primary-light mb-1">{t("Total Users")}</p>
-                                    <h6 className="mb-0">{`${users.length} ${t("Users")}`}</h6>
+                                    <p className="fw-medium text-primary-light mb-1">{t("Total Employees")}</p>
+                                    <h6 className="mb-0">{`${employees.length} ${t("Employees")}`}</h6>
+                                </div>
+                                <div className="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
+                                    <Icon icon="gridicons:multiple-users" className="text-white text-2xl mb-0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col">
+                    <div className="card shadow-none border bg-gradient-start-1 h-100">
+                        <div className="card-body p-20">
+                            <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <div>
+                                    <p className="fw-medium text-primary-light mb-1">{t("Total Auditor")}</p>
+                                    <h6 className="mb-0">{`${auditorCount} ${t("Auditor")}`}</h6>
+                                </div>
+                                <div className="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
+                                    <Icon icon="gridicons:multiple-users" className="text-white text-2xl mb-0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col">
+                    <div className="card shadow-none border bg-gradient-start-1 h-100">
+                        <div className="card-body p-20">
+                            <div className="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                <div>
+                                    <p className="fw-medium text-primary-light mb-1">{t("Total PPUPD")}</p>
+                                    <h6 className="mb-0">{`${ppupdCount} ${t("PPUPD")}`}</h6>
                                 </div>
                                 <div className="w-50-px h-50-px bg-cyan rounded-circle d-flex justify-content-center align-items-center">
                                     <Icon icon="gridicons:multiple-users" className="text-white text-2xl mb-0" />

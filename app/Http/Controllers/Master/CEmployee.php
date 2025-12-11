@@ -10,6 +10,7 @@ use App\Models\Position;
 use Illuminate\Http\Request;
 use App\Traits\ResponseOutput;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Repositories\App\AppRepository;
 use App\Repositories\Employee\EmployeeRepository;
 use App\Http\Requests\Master\Employee\RankDataRequest;
@@ -17,6 +18,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use App\Http\Requests\Master\Employee\ChangePhotoRequest;
 use App\Http\Requests\Master\Employee\EmployeeDataRequest;
 use App\Http\Requests\Master\Employee\PositionDataRequest;
+use App\Http\Requests\Master\Employee\StatusChangeRequest;
 use App\Http\Requests\Master\Employee\LastEducationRequest;
 
 class CEmployee extends Controller
@@ -128,6 +130,18 @@ class CEmployee extends Controller
             return back()->with('success', __("Photo Changed Successfully"));
         });
     }
+    public function changeStatus(StatusChangeRequest $request)
+    {
+        return $this->safeInertiaExecute(function () use ($request) {
+            $data = $request->validated();
+            $employee = Employee::where('nip', $data['nip'])->update([
+                'status' => $data['status'],
+                'status_reason' => isset($data['status_reason']) ? $data['status_reason'] : null,
+            ]);
+            $message = $data['status'] == "Active" ? __("Employee Has Been Sucessfully Activated") : __("Employee Has Been Sucessfully Deactivated");
+            return back()->with('success', $message);
+        });
+    }
 
     /**
      * Update the specified resource in storage.
@@ -165,8 +179,10 @@ class CEmployee extends Controller
     public function destroy(Employee $employee)
     {
         return $this->safeInertiaExecute(function () use ($employee) {
-            $model = Employee::where('id', $employee->id);
-            $this->appRepository->forceDeleteOneModel($model);
+            if ($employee->user_id == Auth::id()) {
+                return back()->with('error', __("Deleting your own account is not allowed"));
+            }
+            $this->employeeRepository->deleteEmployee($employee);
             return back()->with('success', __("Employee Deleted Successfully"));
         });
     }

@@ -11,4 +11,6 @@ Route::prefix('datatable')->name('datatable.')->middleware(['auth'])
         Route::get('/employee/education-history/{nip}', 'educationHistory')->name('education-history'),
         Route::get('/employee/training-history/{nip}', 'trainingHistory')->name('training-history'),
         Route::get('/positions', 'positions')->name('positions'),
+        Route::get('/employee-report', 'employeeReport')->name('employee-report'),
+        Route::get('/employee-assigment', 'employeeAssigment')->name('employee-assigment'),
     ]);

@@ -18,7 +18,6 @@ const notifySuccess = (message, position = "bottom-right") => {
             border: "1px solid #d1fae5",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
             borderRadius: "8px",
-            padding: "16px",
             width: "700px",
             minWidth: "400px",     // Tambahkan ini
             maxWidth: "100%",
@@ -42,8 +41,7 @@ const notifyError = (message, position = "bottom-right") => {
             border: "1px solid #f8d7da",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
             borderRadius: "8px",
-            padding: "16px",
-            width: "400px",
+            width: "500px",
             minWidth: "400px",     // Tambahkan ini
             maxWidth: "100%",
         },
@@ -65,7 +63,6 @@ const notifyInfo = (message, position = "bottom-right") => {
             border: "1px solid #b2ebf2",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
             borderRadius: "8px",
-            padding: "16px",
             width: "400px",
             minWidth: "400px",     // Tambahkan ini
             maxWidth: "100%",

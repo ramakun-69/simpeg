@@ -63,6 +63,7 @@
         "react-datepicker": "^7.4.0",
         "react-dom": "^18.2.0",
         "react-fast-marquee": "^1.6.5",
+        "react-google-recaptcha": "^3.1.0",
         "react-i18next": "^15.5.1",
         "react-modal-video": "^2.0.2",
         "react-quill": "^2.0.0",

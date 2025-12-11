@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\EmployeeAssigment;
 use App\Models\Position;
 use Illuminate\Http\Request;
 
@@ -167,6 +168,64 @@ class CDatatable extends Controller
             'total'        => $data->total(),
             'current_page' => $data->currentPage(),
             'per_page'     => $data->perPage(),
+        ]);
+    }
+
+    public function employeeReport(Request $request)
+    {
+        $data = Employee::select('id', 'user_id', 'rank_id', 'position_id', 'nip', 'name', 'gender', 'division')
+            ->with(['user:id,email,photo', 'position:id,name', 'rank:id,name'])
+
+            ->when(
+                $request->identity,
+                fn($q, $v) =>
+                $q->where(fn($q) => $q->where('name', 'like', "%$v%")->orWhere('nip', 'like', "%$v%"))
+            )
+
+            ->when($request->position_id, fn($q, $v) => $q->where('position_id', $v))
+            ->when($request->rank_id, fn($q, $v) => $q->where('rank_id', $v))
+            ->when($request->gender, fn($q, $v) => $q->where('gender', $v))
+            ->when($request->division, fn($q, $v) => $q->where('division', 'like', "%$v%"))
+
+            ->paginate($request->per_page ?? 10);
+        return response()->json([
+            'data' => $data->items(),
+            'total' => $data->total(),
+            'current_page' => $data->currentPage(),
+            'per_page' => $data->perPage(),
+        ]);
+    }
+    public function employeeAssigment(Request $request)
+    {
+        $perPage = $request->get('per_page', 10);
+        $search  = $request->get('search');
+        $data = EmployeeAssigment::with([
+            'employee:id,nip,name,position_id',
+            'employee.position:id,name',
+            'position:id,name'
+        ])
+            ->when($search, function ($q) use ($search) {
+                $s = "%{$search}%";
+                $q->where('type', 'like', $s)
+                    ->orWhere('letter_number', 'like', $s)
+                    ->orWhereHas(
+                        'employee',
+                        fn($p) =>
+                        $p->where('name', 'like', $s)
+                            ->orWhere('nip', 'like', $s)
+                    )
+                    ->orWhereHas(
+                        'position',
+                        fn($p) =>
+                        $p->where('name', 'like', $s)
+                    );
+            })
+            ->paginate($perPage);
+        return response()->json([
+            'data' => $data->items(),
+            'total' => $data->total(),
+            'current_page' => $data->currentPage(),
+            'per_page' => $data->perPage(),
         ]);
     }
 }

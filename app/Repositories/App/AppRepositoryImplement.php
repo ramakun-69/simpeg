@@ -57,7 +57,6 @@ class AppRepositoryImplement extends Eloquent implements AppRepository
         $oldData = $model;
         $file = request()->file($key);
         if ($file != null) {
-
             if ($oldData->$key) {
                 $this->deleteFile($oldData->$key);
             }

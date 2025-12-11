@@ -302,6 +302,6 @@ return [
         'degree_certificate_number' => 'degree certificate number',
         'degree_certificate_date' => 'degree certificate date',
         'degree_certificate_file' => 'degree certificate file',
-        
+        'status_reason' => "reason"
     ],
 ];

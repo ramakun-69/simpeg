@@ -263,6 +263,21 @@
     "Training Certificate File May Not Be Greater Than 10MB" : "File Sertifikat Tidak Boleh Lebih Dari 10MB",
     "Certificate Must Be A PDF" : "Sertifikat Harus Berupa PDF",
     "Logged out successfully" : "Berhasil Keluar",
-    "Data Updated Successfully" : "Data Berhasil Diperbarui"
-
+    "Data Updated Successfully" : "Data Berhasil Diperbarui",
+    "Your account has been disabled. Please contact the admin" : "Akun Anda telah dinonaktifkan. Silakan hubungi admin",
+    "Employee Has Been Sucessfully Activated" : "Pegawai Berhasil Diaktifkan",
+    "Employee Has Been Sucessfully Deactivated" : "Pegawai Berhasil Dinonaktifkan",
+    "Employee Report" : "Laporan Pegawai",
+    "Male" : "Laki-Laki",
+    "Female" : "Perempuan",
+    "Name" : "Nama",
+    "Gender" : "Jenis Kelamin",
+    "Rank" : "Pangkat",
+    "Division" : "Divisi",
+    "Position" : "Jabatan",
+    "NIP" : "NIP",
+    "Deleting your own account is not allowed" : "Tidak Diizinkan Menghapus Akunmu Sendiri",
+    "Please verify that you are not a robot." : "Harap verifikasi Bahwa Anda Bukan Robot",
+    "Employee Assigned successfully" : "Pegawai Berhasil Ditugaskan",
+    "Data updated successfully" : "Data Berhasil Diperbarui"
 }

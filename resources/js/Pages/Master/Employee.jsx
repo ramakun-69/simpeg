@@ -8,7 +8,7 @@ import EditButton from "../../src/components/datatable/EditButton";
 import DeleteButton from "../../src/components/datatable/DeleteButton";
 import Button from "../../src/components/ui/Button";
 import { useEffect, useState } from "react";
-import { Link, router, usePage } from "@inertiajs/react";
+import { Link, router, useForm, usePage } from "@inertiajs/react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import axios from "axios";
 import Modal from "../../src/components/ui/Modal";
@@ -60,10 +60,10 @@ export default function Employee({ positions, ranks, grades }) {
             },
         },
         {
-            name: t('Image'),
+            name: t('Photo'),
             cell: (row) => (
                 row?.user?.photo ? (
-                    <img src={row?.user?.photo} alt={row.name} className="img-thumbnail" style={{ width: '50px', height: '50px' }} />
+                    <img src={row?.user?.photo_url} alt={row.name} className="img-thumbnail" style={{ width: '50px', height: '50px' }} />
                 ) : null
             ),
         },
@@ -106,7 +106,7 @@ export default function Employee({ positions, ranks, grades }) {
             name: t('Actions'),
             cell: (row) => (
                 <>
-                    <EditButton onClick={() =>  router.get(route('master-data.employees.edit', row.id))} isLoading={isLoading} />
+                    <EditButton onClick={() => router.get(route('master-data.employees.edit', row.id))} isLoading={isLoading} />
                     {row.id !== auth.user.id && (
                         <DeleteButton onClick={() => handleDelete(row.id)} isLoading={isLoading} />
                     )}
@@ -115,7 +115,7 @@ export default function Employee({ positions, ranks, grades }) {
             sortable: true,
         }
     ];
-
+    const { delete: destroy } = useForm({});
     const handleShowModal = (employee = null) => {
         setModal({
             show: true,
@@ -125,6 +125,7 @@ export default function Employee({ positions, ranks, grades }) {
 
     const handleCloseModal = () => {
         setModal(prev => ({ ...prev, show: false }));
+        reset();
     };
 
     const handleDelete = (id) => {

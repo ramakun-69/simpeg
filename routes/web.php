@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CEmployeeAssigment;
 use App\Http\Controllers\CIndex;
 use App\Http\Controllers\CProfile;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +10,7 @@ use App\Http\Controllers\History\CRankHistory;
 use App\Http\Controllers\History\CPositionHistory;
 use App\Http\Controllers\History\CTrainingHistory;
 use App\Http\Controllers\History\CEducationHistory;
+use App\Http\Controllers\Report\CEmployeeReport;
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware('role:Superadmin|Administrator')->group(function () {
@@ -26,6 +28,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('employees/store/last-education-data', [CEmployee::class, 'storeLastEducationData'])->name('employees.store.last-education-data');
         Route::post('employees/change-photo', [CEmployee::class, 'changePhoto'])
             ->name('employees.change-photo');
+        Route::post('employees/change-status', [CEmployee::class, 'changestatus'])
+            ->name('employees.change-status');
 
         Route::resource('employees', CEmployee::class)->middleware('role:Superadmin|Administrator');
 
@@ -40,5 +44,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('rank-history', CRankHistory::class);
     Route::resource('education-history', CEducationHistory::class);
     Route::resource('training-history', CTrainingHistory::class);
+    Route::resource('employee-assigments', CEmployeeAssigment::class);
     Route::resource('profile', CProfile::class);
+
+    Route::prefix('report')->name('report.')->middleware('role:Superadmin|Administrator')->group(function () {
+        Route::post('employees/export', [CEmployeeReport::class, 'store'])->name('employees.export');
+        Route::resource('employees', CEmployeeReport::class);
+    });
 });

@@ -90,6 +90,7 @@ export default function Position({ ...props }) {
     const handleCloseModal = () => {
         clearErrors();
         setModal(prev => ({ ...prev, show: false }));
+        reset();
     }
 
     const handleSubmit = (e) => {

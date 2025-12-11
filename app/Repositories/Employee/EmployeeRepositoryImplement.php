@@ -11,6 +11,7 @@ use App\Models\EducationHistory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\App\AppRepository;
+use Illuminate\Support\Facades\Storage;
 use LaravelEasyRepository\Implementations\Eloquent;
 
 class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
@@ -43,34 +44,29 @@ class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
         });
     }
 
-
-    private function saveEmployee($request)
+    public function deleteEmployee($employee)
     {
-        $userData = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'username' => $request->nip,
-            'password' => $request->nip,
-        ];
-        $user =  $this->appRepository->updateOrCreateOneModel(new User, ['id' => $request->user_id], $userData);
-        $employeeData = [
-            'nip' => $request->nip,
-            'name' => $request->name,
-            'user_id' => $user->id,
-            'position_id' => $request->position_id,
-            'rank_id' => $request->rank_id,
-            'grade_id' => $request->grade_id,
-            'gender' => $request->gender,
-            'born_place' => $request->born_place,
-            'born_date' => $request->born_date,
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'employee_type' => $request->employee_type,
-            'division' => $request->division
-        ];
-        $employee =  $this->appRepository->updateOrCreateOneModel(new Employee, ['id' => $request->id], $employeeData);
-        return $employee;
+        DB::transaction(function () use ($employee) {
+            $fileFields = [
+                'positionHistories' => 'position_sk_file',
+                'rankHistories' => 'rank_sk_file',
+                'educationHistories' => 'degree_certificate_file',
+                'trainingHistories' => 'training_certificate_file',
+            ];
+
+            foreach ($fileFields as $relation => $field) {
+                $employee->$relation
+                    ->pluck($field)
+                    ->filter()
+                    ->each(fn($file) => Storage::delete($file));
+            }
+            if ($employee->user?->photo) {
+                Storage::delete($employee->user->photo);
+            }
+            $this->appRepository->deleteOneModel($employee);
+        });
     }
+
     public function savePositionHistory($request, $employee)
     {
         $model = new PositionHistory;
@@ -148,5 +144,36 @@ class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
             'training_certificate_file',
             'SK/Training-Certificate'
         );
+    }
+
+
+
+    // Private Method
+    private function saveEmployee($request)
+    {
+        $userData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'username' => $request->nip,
+            'password' => $request->nip,
+        ];
+        $user =  $this->appRepository->updateOrCreateOneModel(new User, ['id' => $request->user_id], $userData);
+        $employeeData = [
+            'nip' => $request->nip,
+            'name' => $request->name,
+            'user_id' => $user->id,
+            'position_id' => $request->position_id,
+            'rank_id' => $request->rank_id,
+            'grade_id' => $request->grade_id,
+            'gender' => $request->gender,
+            'born_place' => $request->born_place,
+            'born_date' => $request->born_date,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'employee_type' => $request->employee_type,
+            'division' => $request->division
+        ];
+        $employee =  $this->appRepository->updateOrCreateOneModel(new Employee, ['id' => $request->id], $employeeData);
+        return $employee;
     }
 }

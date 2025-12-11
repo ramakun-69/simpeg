@@ -26,7 +26,7 @@ class User extends Authenticatable
     protected $guarded = [];
     protected $keyType = 'string';
     public $incrementing = false;
-
+    protected $appends = ['photo_url'];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -54,11 +54,11 @@ class User extends Authenticatable
         ];
     }
 
- 
-    public function getPhotoAttribute($value)
+
+    public function getPhotoUrlAttribute()
     {
-        if ($value && File::exists(storage_path("app/public/" . $value))) {
-            return url("storage/" . $value);
+        if ($this->photo && File::exists(storage_path("app/public/" . $this->photo))) {
+            return url("storage/" . $this->photo);
         }
 
         return asset('/assets/images/users/user-default.jpg');

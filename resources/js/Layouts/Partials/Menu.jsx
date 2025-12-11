@@ -45,7 +45,7 @@ export default function Menu({ ...props }) {
                 <>
                     <li className='sidebar-menu-group-title'>{t('Master Data')}</li>
                     <li>
-                        <Link href={route('master-data.employees.index')} className={isActive('master-data.employees.*') || isActive('trash.employees')}>
+                        <Link href={route('master-data.employees.index')} className={isActive('master-data.employees.*') || isActive('trash.employees') || isActive('profile.*')}>
                             <Icon icon='mdi:user' className='menu-icon' />
                             <span>{t('Employees')}</span>
                         </Link>
@@ -62,10 +62,17 @@ export default function Menu({ ...props }) {
             )
             }
 
-            {/* 
-            {hasAnyRole(['Admin', 'Warehouse']) && (
+
+
+            {hasAnyRole(['Administrator', 'Superadmin']) && (
                 <>
                     <li className='sidebar-menu-group-title'>{t('Other')}</li>
+                    <li>
+                        <Link href={route('employee-assigments.index')} className={isActive('employee-assigments.*')}>
+                            <Icon icon='mdi:account-switch' className='menu-icon' />
+                            <span>{t('PLH / PLT')}</span>
+                        </Link>
+                    </li>
                     <li className="dropdown">
                         <Link href="#" className={isActive('report.*')}>
                             <Icon icon='mdi:file-export' className='menu-icon' />
@@ -73,29 +80,14 @@ export default function Menu({ ...props }) {
                         </Link>
                         <ul className='sidebar-submenu'>
                             <li>
-                                <Link href={route('report.items.index')} className={isActive('report.items.*')}>
+                                <Link href={route('report.employees.index')} className={isActive('report.employees.*')}>
                                     <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />
-                                    <span>{t('Items')}</span>
+                                    <span>{t('Employee')}</span>
                                 </Link>
                             </li>
-                            
-                            <li>
-                                <Link href={route('report.stock-entries.index')} className={isActive('report.stock-entries.*')}>
-                                    <i className='ri-circle-fill circle-icon text-danger-600 w-auto' />
-                                    <span>{t('Stock Entries')}</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={route('report.item-requests.index')} className={isActive('report.item-requests.*')}>
-                                    <i className='ri-circle-fill circle-icon text-success-600 w-auto' />
-                                    <span>{t('Item Requests')}</span>
-                                </Link>
-                            </li>
-
-
                         </ul>
                     </li>
-                    {hasAnyRole(['Admin']) && (
+                    {/* {hasAnyRole(['Admin']) && (
                         <li>
                             <Link href={route('settings.index')} className={isActive('settings.*')}>
                                 <Icon icon='mdi:settings' className='menu-icon' />
@@ -103,9 +95,9 @@ export default function Menu({ ...props }) {
                             </Link>
                         </li>
 
-                    )}
+                    )} */}
                 </>
-            )} */}
+            )}
 
         </ul >
     );

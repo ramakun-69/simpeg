@@ -11,14 +11,19 @@ import RankHistory from "../Master/Partials/Employee/Detail/RankHistory";
 import PositionHistory from "../Master/Partials/Employee/Detail/PositionHistory";
 import EducationHistory from "../Master/Partials/Employee/Detail/EducationHistory";
 import TrainingHistory from "../Master/Partials/Employee/Detail/TrainingHistory";
-
+import Modal from "../../src/components/ui/Modal";
+import Select from 'react-select';
+import ErrorMessage from "../../src/components/ui/ErrorMessage";
 
 export default function Index({ employee, positions, ranks, grades }) {
     const { t } = useTranslation();
     const { auth } = usePage().props;
-    const [imagePreview, setImagePreview] = useState(employee?.user?.photo);
+    const [imagePreview, setImagePreview] = useState(employee?.user?.photo_url);
     const [activeTab, setActiveTab] = useState("summary");
-
+    const [modal, setModal] = useState({
+        show: false,
+        title: "",
+    });
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
     const togglePasswordVisibility = () => {
@@ -43,7 +48,8 @@ export default function Index({ employee, positions, ranks, grades }) {
         employee_type: employee?.employee_type ?? '',
         division: employee?.division ?? '',
         password: "",
-        password_confirmation: ""
+        password_confirmation: "",
+        status_reason: "",
     });
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -73,6 +79,47 @@ export default function Index({ employee, positions, ranks, grades }) {
         }
     };
     const isOwnProfile = auth.user.id === employee.user_id;
+    const isActive = employee?.status === "Active";
+    const handleStatusChange = (e) => {
+        if (isActive) {
+            setModal({
+                show: true,
+                title: t('Enter Attribute', { attribute: t('Reason') }),
+            });
+        } else {
+            handleSubmitStatusChange("Active");
+        }
+    };
+
+    const handleCloseModal = () => {
+        setModal({
+            show: false
+        });
+        reset();
+    }
+
+    const handleSubmitStatusChange = (status) => {
+        transform(data => ({
+            ...data,
+            status: status,
+        }))
+        post(route('master-data.employees.change-status'), {
+            preserveScroll: true,
+            onSuccess: (page) => {
+                const error = page.props?.flash?.error;
+                const success = page.props?.flash?.success;
+                handleCloseModal();
+                if (error) notifyError(error, 'bottom-center');
+                notifySuccess(success, 'bottom-center');
+
+            },
+            onError: (error) => {
+                notifyError(error, 'bottom-center')
+            }
+        })
+    }
+    const reasonStatus = ['Retired', 'Transfer', 'Honorable Discharge', 'Dishonorable Discharge'];
+
     return (
         <AppLayout>
             <div className="row gy-4">
@@ -112,7 +159,20 @@ export default function Index({ employee, positions, ranks, grades }) {
                                 </div>
                                 {/* Upload Image End */}
                                 <h6 className="mb-0 mt-16">{employee?.name}</h6>
-                                <span className="text-secondary-light mb-16">{employee?.user?.email}</span>
+                                <span className={`badge bg-${employee?.status == 'Active' ? 'success' : 'danger'} mb-20`}>{t(employee?.status)}</span>
+                                {auth.role.some(r => ["Administrator", "Superadmin"].includes(r)) && (
+                                    <div className="mb-3">
+                                        <Button
+                                            type="button"
+                                            onClick={handleStatusChange}
+                                            isLoading={processing}
+                                            className={`btn btn-sm border ${isActive ? "btn-danger" : "btn-success"
+                                                }`}
+                                        >
+                                            <Icon icon="ic:baseline-power-settings-new" className="me-2 " width="20" height="20" />  {isActive ? t("Deactivate") : t("Activate")}
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                             <div className="mt-24">
                                 <h6 className="text-xl mb-16">{t('Employee Info')}</h6>
@@ -173,6 +233,16 @@ export default function Index({ employee, positions, ranks, grades }) {
                                             : {employee?.grade?.name || '-'}
                                         </span>
                                     </li>
+                                    {!isActive && (
+                                        <li className="d-flex align-items-center gap-1 mb-12">
+                                            <span className="w-30 text-md fw-semibold text-primary-light">
+                                                {t('Reason Disabled')}
+                                            </span>
+                                            <span className="w-70 text-secondary-light fw-medium">
+                                                : {t(employee?.status_reason)}
+                                            </span>
+                                        </li>
+                                    )}
                                 </ul>
                             </div>
                         </div>
@@ -429,8 +499,8 @@ export default function Index({ employee, positions, ranks, grades }) {
                                 </div>
                             </div>
 
-                            {(activeTab === "summary" || activeTab === "change-password") && (
-                                <div className="d-flex align-items-start justify-content-start gap-3">
+                            <div className="d-flex align-items-start justify-content-start gap-3">
+                                {(activeTab === "summary" || activeTab === "change-password") && (
                                     <Button
                                         type="button"
                                         onClick={(e) => {
@@ -455,12 +525,46 @@ export default function Index({ employee, positions, ranks, grades }) {
                                     >
                                         {t('Save')}
                                     </Button>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+
+            {/* Moadal */}
+            <Modal
+                show={modal.show}
+                title={modal.title}
+                size="md"
+                fullscreen={false}
+                hideFooter={false}
+                onClose={handleCloseModal}
+                onSave={() => handleSubmitStatusChange("Inactive")}
+                processing={processing}
+            >
+                <Select
+                    options={reasonStatus.map(rs => ({
+                        value: rs,
+                        label: t(rs)
+                    }))}
+                    onChange={(option) => {
+                        clearErrors('status_reason');
+                        setData('status_reason', option ? option.value : '');
+                    }}
+                    placeholder={t('Select Reason')}
+                    isSearchable={true}
+                    isClearable={true}
+                    value={
+                        reasonStatus
+                            .map(rs => ({ value: rs, label: t(rs) }))
+                            .find(option => option.value === data.status_reason) || null
+                    }
+                />
+                {errors.status_reason && <ErrorMessage message={errors.status_reason} />}
+            </Modal>
         </AppLayout >
     );
 }

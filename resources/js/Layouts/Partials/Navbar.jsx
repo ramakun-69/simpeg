@@ -19,8 +19,8 @@ export default function Navbar({ sidebarControl, mobileMenuControl, sidebarActiv
             post(route('logout'));
         })
     }
-  
-   
+
+
     const handleChangeLanguage = (e) => {
         const newLang = e.target.value;
         setCurrentLang(newLang);
@@ -37,7 +37,6 @@ export default function Navbar({ sidebarControl, mobileMenuControl, sidebarActiv
 
     const { user } = usePage().props.auth;
     const { hasAnyRole } = useRole();
-     console.log(user)
     return (
         <>
             <div className='navbar-header'>
@@ -45,7 +44,7 @@ export default function Navbar({ sidebarControl, mobileMenuControl, sidebarActiv
                     <div className='col-auto'>
                         <div className='d-flex flex-wrap align-items-center gap-4'>
 
-                            {hasAnyRole(['Administrator','Superadmin']) && (
+                            {hasAnyRole(['Administrator', 'Superadmin']) && (
                                 <>
                                     <button
                                         type='button'
@@ -60,14 +59,14 @@ export default function Navbar({ sidebarControl, mobileMenuControl, sidebarActiv
                                         ) : (
                                             <Icon
                                                 icon='heroicons:bars-3-solid'
-                                                className='icon text-2xl non-active '
+                                                className='icon text-2xl non-active'
                                             />
                                         )}
                                     </button>
                                     <button
                                         onClick={mobileMenuControl}
                                         type='button'
-                                        className='sidebar-mobile-toggle'
+                                        className='sidebar-mobile-toggle text-white'
                                     >
                                         <Icon icon='heroicons:bars-3-solid' className='icon' />
                                     </button>

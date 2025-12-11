@@ -26,20 +26,23 @@ class CLogin extends Controller
                 'password' => $request->password,
             ];
 
-            if (Auth::attempt($credentials, $request->boolean('remember'))) {
-                // dd(Auth::check());   
-                $user = Auth::user();
-                if (in_array($user->role, ['Administrator', 'Superadmin'])) {
-                    return redirect()->intended(route('dashboard'))
-                        ->with('success', __('Login successful'));
-                } else {
-                    return redirect()->route('profile.index')
-                        ->with('success', __('Login successful'));
-                }
+            if (!Auth::attempt($credentials, $request->boolean('remember'))) {
+                return back()->withErrors(['username' => __('auth.failed')])->withInput();
             }
-            return redirect()->back()
-                ->withErrors(['username' => __('auth.failed')])
-                ->withInput();
+
+            $user = Auth::user();
+            $employee = $user->employee;
+
+            if (!$employee || $employee->status !== 'Active') {
+                Auth::logout();
+                return back()->withErrors(['username' => __('Your account has been disabled. Please contact the admin')]);
+            }
+
+            $target = $user->hasAnyRole(['Administrator', 'Superadmin'])
+                ? route('dashboard')
+                : route('profile.index');
+
+            return redirect()->intended($target)->with('success', __('Login successful'));
         });
     }
 
