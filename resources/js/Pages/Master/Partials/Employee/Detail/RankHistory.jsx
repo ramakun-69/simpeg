@@ -19,7 +19,7 @@ import RankDataForm from "../Form/RankDataForm";
 import SwitchButton from "../../../../../src/components/ui/SwitchButton";
 
 
-export default function RankHistory({ ranks, employee, grades }) {
+export default function RankHistory({ ranks, employee}) {
     const { t } = useTranslation();
     const [modal, setModal] = useState({
         show: false,
@@ -64,12 +64,6 @@ export default function RankHistory({ ranks, employee, grades }) {
         {
             name: t('Name'),
             selector: row => row?.rank?.name,
-            width: "200px",
-            sortable: true,
-        },
-        {
-            name: t('Grade'),
-            selector: row => row?.grade?.name,
             width: "200px",
             sortable: true,
         },
@@ -265,7 +259,7 @@ export default function RankHistory({ ranks, employee, grades }) {
                 <SwitchButton onChange={(e) => setData("is_last", e.target.checked ? "Yes" : "No")}
                     label={t("Set as Last Rank")} checked={data?.is_last == "Yes"} className="mb-20" />
                 <hr />
-                <RankDataForm ranks={ranks} grades={grades} data={data} setData={setData} errors={errors} setError={setError} clearErrors={clearErrors} />
+                <RankDataForm ranks={ranks} data={data} setData={setData} errors={errors} setError={setError} clearErrors={clearErrors} />
             </Modal>
 
         </>

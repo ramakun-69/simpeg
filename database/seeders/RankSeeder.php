@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+
 use App\Models\Rank;
 use Illuminate\Database\Seeder;
 
@@ -13,21 +14,33 @@ class RankSeeder extends Seeder
     public function run()
     {
         $ranks = [
-            'Juru Muda',
-            'Juru Muda Tingkat I',
-            'Juru',
-            'Juru Tingkat I',
-            'Pengatur Muda',
-            'Pengatur Muda Tingkat I',
-            'Penata Muda',
-            'Penata Muda Tingkat I',
-            'Penata',
-            'Penata Tingkat I',
-            'Pembina',
-            'Pembina Tingkat I',
-            'Pembina Utama Muda',
-            'Pembina Utama Madya',
-            'Pembina Utama',
+            'CPNS I/a - Juru Muda',
+            'CPNS I/b - Juru Muda Tingkat I',
+            'CPNS I/c - Juru',
+            'CPNS I/d - Juru Tingkat I',
+            'CPNS II/a - Pengatur Muda',
+            'CPNS II/b - Pengatur Muda Tingkat I',
+            'CPNS II/c - Pengatur Muda',
+            'CPNS II/d - Pengatur Muda',
+            'CPNS III/a - Penata Muda',
+            'CPNS III/b - Penata Muda Tingkat I',
+            'I/a - Juru Muda',
+            'I/b - Juru Muda Tingkat I',
+            'I/c - Juru',
+            'I/d - Juru Tingkat I',
+            'II/a - Pengatur Muda',
+            'II/b - Pengatur Muda Tingkat I',
+            'II/c - Pengatur Muda',
+            'II/d - Pengatur Muda',
+            'III/a - Penata Muda',
+            'III/b - Penata Muda Tingkat I',
+            'III/c - Penata',
+            'III/d - Penata Tingkat I',
+            'IV/a - Pembina',
+            'IV/b - Pembina Tingkat I',
+            'IV/c - Pembina Utama Muda',
+            'IV/d - Pembina Utama Madya',
+            'IV/e - Pembina Utama',
         ];
 
         foreach ($ranks as $rank) {

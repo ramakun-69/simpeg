@@ -10,7 +10,6 @@ class RankDataRequest extends FormRequest
     [
         'rank_history_id' => 0,
         'rank_id' => 1,
-        'grade_id' => 1,
         'rank_appointment_date' => 1,
         'rank_sk_number' => 1,
         'rank_sk_date' => 1,

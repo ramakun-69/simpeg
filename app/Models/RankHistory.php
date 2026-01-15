@@ -24,10 +24,7 @@ class RankHistory extends Model
     {
         return $this->belongsTo(Rank::class);
     }
-    public function grade()
-    {
-        return $this->belongsTo(Grade::class);
-    }
+   
 
     public function getSkFileUrlAttribute()
     {

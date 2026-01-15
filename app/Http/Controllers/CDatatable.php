@@ -93,7 +93,7 @@ class CDatatable extends Controller
         $employee = Employee::where('nip', $nip)->firstOrFail();
 
         $data = $employee->rankHistories()
-            ->with(['rank:id,name', 'grade:id,name'])
+            ->with(['rank:id,name'])
             ->when($search, function ($q) use ($search) {
                 $s = "%{$search}%";
 
@@ -101,11 +101,6 @@ class CDatatable extends Controller
                     'rank_appointment_date',
                     'rank_sk_date',
                 ], 'like', $s)
-                    ->orWhereHas(
-                        'grade',
-                        fn($p) =>
-                        $p->where('name', 'like', $s)
-                    )
                     ->orWhereHas(
                         'rank',
                         fn($p) =>
@@ -174,7 +169,7 @@ class CDatatable extends Controller
     public function employeeReport(Request $request)
     {
         $data = Employee::select('id', 'user_id', 'rank_id', 'position_id', 'nip', 'name', 'gender', 'division')
-            ->with(['user:id,email,photo', 'position:id,name', 'rank:id,name'])
+            ->with(['user:id,email,photo', 'position:id,name', 'activeAssignment.position:id,name', 'rank:id,name'])
 
             ->when(
                 $request->identity,
@@ -195,6 +190,61 @@ class CDatatable extends Controller
             'per_page' => $data->perPage(),
         ]);
     }
+    public function trainingReport(Request $request)
+    {
+        $employees = Employee::query()
+            ->when(
+                $request->identity,
+                fn($q, $v) =>
+                $q->where(
+                    fn($q) =>
+                    $q->where('name', 'like', "%{$v}%")
+                        ->orWhere('nip', 'like', "%{$v}%")
+                )
+            )
+            ->when(
+                $request->issuing_institution || $request->training_name,
+                fn($q) =>
+                $q->withWhereHas(
+                    'trainingHistories',
+                    fn($q) =>
+                    $q->select('id', 'employee_id', 'issuing_institution', 'training_name')
+                        ->when(
+                            $request->issuing_institution,
+                            fn($q, $v) =>
+                            $q->where('issuing_institution', 'like', "%{$v}%")
+                        )
+                        ->when(
+                            $request->training_name,
+                            fn($q, $v) =>
+                            $q->where('training_name', 'like', "%{$v}%")
+                        )
+                )
+            )
+            ->when(
+                ! $request->issuing_institution && ! $request->training_name,
+                fn($q) =>
+                $q->with('trainingHistories:id,employee_id,issuing_institution,training_name')
+            )
+            ->paginate($request->per_page ?? 10);
+
+        $data = collect($employees->items())->map(fn($employee) => [
+            'nip' => $employee->nip,
+            'name' => $employee->name,
+            'trainings_by_institution' =>
+            $employee->trainingHistories
+                ->groupBy('issuing_institution')
+                ->map(fn($items) => $items->pluck('training_name')->values()),
+        ]);
+
+        return response()->json([
+            'data' => $data,
+            'total' => $employees->total(),
+            'current_page' => $employees->currentPage(),
+            'per_page' => $employees->perPage(),
+        ]);
+    }
+
     public function employeeAssigment(Request $request)
     {
         $perPage = $request->get('per_page', 10);

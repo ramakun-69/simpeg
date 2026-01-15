@@ -12,7 +12,7 @@ class Employee extends Model
     protected $guarded = [];
     protected $keyType = 'string';
     public $incrementing = false;
-    protected $appends = ['last_position', 'last_rank', 'last_education'];
+    protected $appends = ['last_position', 'last_rank', 'last_education','current_position'];
 
     public function user()
     {
@@ -27,10 +27,6 @@ class Employee extends Model
         return $this->belongsTo(Rank::class);
     }
 
-    public function grade()
-    {
-        return $this->belongsTo(Grade::class);
-    }
     public function rankHistories()
     {
         return $this->hasMany(RankHistory::class);
@@ -48,6 +44,45 @@ class Employee extends Model
         return $this->hasMany(TrainingHistory::class);
     }
 
+    public function assignments()
+    {
+        return $this->hasMany(EmployeeAssigment::class);
+    }
+
+    // assignment aktif (PLH / PLT)
+    public function activeAssignment()
+    {
+        return $this->hasOne(EmployeeAssigment::class)
+            ->whereIn('type', ['PLH', 'PLT'])
+            ->whereDate('start_date', '<=', now())
+            ->where(function ($q) {
+                $q->whereNull('end_date')
+                    ->orWhereDate('end_date', '>=', now());
+            });
+    }
+
+    public function getCurrentPositionAttribute()
+    {
+        // Jika ada PLH / PLT aktif → pakai itu
+        if ($this->activeAssignment && $this->activeAssignment->position) {
+            return [
+                'id'   => $this->activeAssignment->position->id,
+                'name' => $this->activeAssignment->position->name,
+                'type' => $this->activeAssignment->type, // PLH / PLT
+            ];
+        }
+
+        // Jika tidak → posisi definitif
+        if ($this->position) {
+            return [
+                'id'   => $this->position->id,
+                'name' => $this->position->name,
+                'type' => 'DEFINITIF',
+            ];
+        }
+
+        return null;
+    }
     public function getLastPositionAttribute()
     {
         $history = $this->positionHistories()->where('is_last', 'Yes')->first();
@@ -66,6 +101,4 @@ class Employee extends Model
 
         return $history ? $history : null;
     }
-
-  
 }

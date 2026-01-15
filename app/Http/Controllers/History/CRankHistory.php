@@ -35,7 +35,7 @@ class CRankHistory extends Controller
                     ->where('id', '!=', $history->id)
                     ->update(['is_last' => 'No']);
                 $history->update(['is_last' => 'Yes']);
-                $employee->update(['rank_id' => $request->rank_id, 'grade_id' => $request->grade_id]);
+                $employee->update(['rank_id' => $request->rank_id]);
             }
             $message = $history->wasRecentlyCreated
                 ? __('Rank History created successfully')

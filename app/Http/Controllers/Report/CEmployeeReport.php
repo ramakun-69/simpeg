@@ -20,8 +20,7 @@ class CEmployeeReport extends Controller
     {
         $positions = Position::cursor();
         $ranks = Rank::cursor();
-        $grades = Grade::cursor();
-        return inertia('Report/EmployeeReport', compact('ranks', 'grades', 'positions'));
+        return inertia('Report/EmployeeReport', compact('ranks', 'positions'));
     }
     public function store(Request $request)
     {

@@ -15,8 +15,7 @@ class CProfile extends Controller
         $employee = Auth::user()->employee;
         $positions = Position::cursor();
         $ranks = Rank::cursor();
-        $grades = Grade::cursor();
-        $employee->load('position', 'rank', 'grade', 'user');
-        return inertia('Profile/Index', compact('employee', 'ranks', 'grades', 'positions'));
+        $employee->load('position', 'rank', 'user');
+        return inertia('Profile/Index', compact('employee', 'ranks', 'positions'));
     }
 }

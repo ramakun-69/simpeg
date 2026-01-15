@@ -325,6 +325,10 @@ export default {
         "Select Employee" : "Pilih Pegawai",
         "Current Position" : "Jabatan Saat Ini",
         "Assigned Position" : "Jabatan Yang Akan Ditugaskan",
-        "Document" : "Dokumen"
+        "Document" : "Dokumen",
+        "Set As Admin" : "Jadikan Sebagai Admin",
+        "Set As Employee" : "Jadikan Sebagai Pegawai",
+        "Training" : "Diklat",
+        "Training Report" : "Laporan Diklat"
     },
 };

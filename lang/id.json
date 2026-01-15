@@ -279,5 +279,9 @@
     "Deleting your own account is not allowed" : "Tidak Diizinkan Menghapus Akunmu Sendiri",
     "Please verify that you are not a robot." : "Harap verifikasi Bahwa Anda Bukan Robot",
     "Employee Assigned successfully" : "Pegawai Berhasil Ditugaskan",
-    "Data updated successfully" : "Data Berhasil Diperbarui"
+    "Data updated successfully" : "Data Berhasil Diperbarui",
+    "Role Has Been Changed" : "Peran Telah Diubah",
+    "Training Report" : "Laporan Diklat",
+    "Issuing Institution" : "Lembaga Yang Mengeluarkan",
+    "Training Name" : "Nama Diklat"
 }

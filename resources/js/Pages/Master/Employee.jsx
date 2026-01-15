@@ -17,7 +17,7 @@ import { notifyError, notifySuccess } from "../../src/components/ui/Toastify";
 import EmployeeForm from "./Partials/Employee/Form/EmployeeForm";
 import { route } from "ziggy-js";
 
-export default function Employee({ positions, ranks, grades }) {
+export default function Employee({ positions, ranks }) {
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [modal, setModal] = useState({
@@ -125,7 +125,7 @@ export default function Employee({ positions, ranks, grades }) {
 
     const handleCloseModal = () => {
         setModal(prev => ({ ...prev, show: false }));
-        reset();
+      
     };
 
     const handleDelete = (id) => {
@@ -153,10 +153,7 @@ export default function Employee({ positions, ranks, grades }) {
                         <Icon icon="line-md:plus" className="me-2" width="20" height="20" />
                         {t('Add New Employee')}
                     </Button>
-                    <Link href={route('trash.employees')} className="btn btn-sm btn-danger ms-2">
-                        <Icon icon="line-md:trash" className="me-2" width="20" height="20" />
-                        {t('Trash')}
-                    </Link>
+                
                 </div>
                 <div className="card">
                     <div className="card-body">
@@ -219,7 +216,6 @@ export default function Employee({ positions, ranks, grades }) {
                     }}
                     positions={positions}
                     ranks={ranks}
-                    grades={grades}
                 />
             </Modal>
         </AppLayout>

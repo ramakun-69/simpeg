@@ -11,7 +11,9 @@ import Button from "../../src/components/ui/Button";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { notifyError } from "../../src/components/ui/Toastify";
 import TextInput from "../../src/components/ui/TextInput";
-export default function ItemReport({ ranks, positions, grades }) {
+import useDebounce from "../../src/hook/useDebounce";
+
+export default function EmployeeReport({ ranks, positions }) {
     const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     // Pagination states
@@ -28,14 +30,14 @@ export default function ItemReport({ ranks, positions, grades }) {
         division: '',
     });
     const { identity, position_id: positionId, rank_id: rankId, gender, division } = data;
-
+    const debouncedIdentity = useDebounce(identity, 500);
     const loadTableData = () => {
         setIsLoading(true);
         axios.get(route('datatable.employee-report'), {
             params: {
                 page: currentPage,
                 per_page: rowsPerPage,
-                identity: identity,
+                identity: debouncedIdentity,
                 position_id: positionId,
                 rank_id: rankId,
                 gender: gender,
@@ -49,7 +51,7 @@ export default function ItemReport({ ranks, positions, grades }) {
     };
     useEffect(() => {
         loadTableData();
-    }, [currentPage, rowsPerPage, identity, positionId, rankId, gender, division]);
+    }, [currentPage, rowsPerPage, debouncedIdentity, positionId, rankId, gender, division]);
     const COLUMN = [
         {
             name: 'No',
@@ -82,11 +84,13 @@ export default function ItemReport({ ranks, positions, grades }) {
         },
         {
             name: t('Position'),
-            selector: row => t(row?.position?.name),
+            selector: row => t(row?.current_position?.name),
+            width: '200px',
             sortable: true,
         },
         {
             name: t('Rank'),
+            width: '200px',
             selector: row => t(row?.rank?.name),
             sortable: true,
         },
@@ -105,7 +109,7 @@ export default function ItemReport({ ranks, positions, grades }) {
             setIsExporting(true); // mulai animasi
 
             const response = await axios.post(route("report.employees.export"), {
-                identity: identity,
+                identity: debouncedIdentity,
                 position_id: positionId,
                 rank_id: rankId,
                 gender: gender,
@@ -143,7 +147,7 @@ export default function ItemReport({ ranks, positions, grades }) {
     ];
     return (
         <AppLayout>
-            <Breadcrumb title={t('Report')} subtitle={t('Item Report')} />
+            <Breadcrumb title={t('Report')} subtitle={t('Employee Report')} />
             <div className="container">
                 <div className="card">
                     <div className="card-body">

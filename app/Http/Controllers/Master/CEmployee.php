@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Master;
 
 use App\Models\Rank;
 use App\Models\User;
-use App\Models\Grade;
 use App\Models\Employee;
 use App\Models\Position;
 use Illuminate\Http\Request;
@@ -37,8 +36,7 @@ class CEmployee extends Controller
     {
         $positions = Position::cursor();
         $ranks = Rank::cursor();
-        $grades = Grade::cursor();
-        return inertia('Master/Employee', compact('positions', 'ranks', 'grades'));
+        return inertia('Master/Employee', compact('positions', 'ranks'));
     }
 
     /**
@@ -89,9 +87,9 @@ class CEmployee extends Controller
 
             // VALIDASI ULANG SEMUA STEP
             $this->validate($request, (new EmployeeDataRequest)->rules());
-            $this->validate($request, (new PositionDataRequest)->rules());
-            $this->validate($request, (new RankDataRequest)->rules());
-            $this->validate($request, (new LastEducationRequest)->rules());
+            // $this->validate($request, (new PositionDataRequest)->rules());
+            // $this->validate($request, (new RankDataRequest)->rules());
+            // $this->validate($request, (new LastEducationRequest)->rules());
 
             // SIMPAN SEMUA DATA
             $this->employeeRepository->employeeStore($request);
@@ -116,9 +114,9 @@ class CEmployee extends Controller
     {
         $positions = Position::cursor();
         $ranks = Rank::cursor();
-        $grades = Grade::cursor();
-        $employee->load('position', 'rank', 'grade', 'user');
-        return inertia('Profile/Index', compact('employee', 'ranks', 'grades', 'positions'));
+
+        $employee->load('position', 'rank', 'user.roles');
+        return inertia('Profile/Index', compact('employee', 'ranks', 'positions'));
     }
 
     public function changePhoto(ChangePhotoRequest $request)
@@ -139,6 +137,22 @@ class CEmployee extends Controller
                 'status_reason' => isset($data['status_reason']) ? $data['status_reason'] : null,
             ]);
             $message = $data['status'] == "Active" ? __("Employee Has Been Sucessfully Activated") : __("Employee Has Been Sucessfully Deactivated");
+            return back()->with('success', $message);
+        });
+    }
+    public function changeRole(Request $request)
+    {
+        return $this->safeInertiaExecute(function () use ($request) {
+
+            $employee = Employee::with('user')->where('nip', $request->nip)->first();
+            $user = $employee->user;
+            if ($request->role === 'Employee') {
+                $user->syncRoles([]);
+            }
+            if ($request->role === 'Administrator') {
+                $user->syncRoles(['Administrator']);
+            }
+            $message = __("Role Has Been Changed");
             return back()->with('success', $message);
         });
     }

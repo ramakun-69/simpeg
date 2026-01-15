@@ -22,4 +22,9 @@ class TrainingHistory extends Model
         }
         return null;
     }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
 }

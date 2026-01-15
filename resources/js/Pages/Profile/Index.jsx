@@ -14,8 +14,9 @@ import TrainingHistory from "../Master/Partials/Employee/Detail/TrainingHistory"
 import Modal from "../../src/components/ui/Modal";
 import Select from 'react-select';
 import ErrorMessage from "../../src/components/ui/ErrorMessage";
+import { confirmAlert } from "../../src/components/ui/SweetAlert";
 
-export default function Index({ employee, positions, ranks, grades }) {
+export default function Index({ employee, positions, ranks }) {
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const [imagePreview, setImagePreview] = useState(employee?.user?.photo_url);
@@ -91,6 +92,7 @@ export default function Index({ employee, positions, ranks, grades }) {
         }
     };
 
+
     const handleCloseModal = () => {
         setModal({
             show: false
@@ -119,7 +121,29 @@ export default function Index({ employee, positions, ranks, grades }) {
         })
     }
     const reasonStatus = ['Retired', 'Transfer', 'Honorable Discharge', 'Dishonorable Discharge'];
+    const isAdmin = (employee?.user?.roles || []).some(r => ["Administrator", "Superadmin"].includes(r.name));
+    const handleSetAsAdmin = (e) => {
+        confirmAlert(t("Are You Sure?"), '', 'warning', () => {
+            transform(data => ({
+                ...data,
+                role: isAdmin ? 'Employee' : 'Administrator',
+            }))
+            post(route('master-data.employees.change-role'), {
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    const error = page.props?.flash?.error;
+                    const success = page.props?.flash?.success;
+                    handleCloseModal();
+                    if (error) notifyError(error, 'bottom-center');
+                    notifySuccess(success, 'bottom-center');
 
+                },
+                onError: (error) => {
+                    notifyError(error, 'bottom-center')
+                }
+            });
+        });
+    };
     return (
         <AppLayout>
             <div className="row gy-4">
@@ -160,19 +184,32 @@ export default function Index({ employee, positions, ranks, grades }) {
                                 {/* Upload Image End */}
                                 <h6 className="mb-0 mt-16">{employee?.name}</h6>
                                 <span className={`badge bg-${employee?.status == 'Active' ? 'success' : 'danger'} mb-20`}>{t(employee?.status)}</span>
-                                {auth.role.some(r => ["Administrator", "Superadmin"].includes(r)) && (
-                                    <div className="mb-3">
-                                        <Button
-                                            type="button"
-                                            onClick={handleStatusChange}
-                                            isLoading={processing}
-                                            className={`btn btn-sm border ${isActive ? "btn-danger" : "btn-success"
-                                                }`}
-                                        >
-                                            <Icon icon="ic:baseline-power-settings-new" className="me-2 " width="20" height="20" />  {isActive ? t("Deactivate") : t("Activate")}
-                                        </Button>
-                                    </div>
-                                )}
+                                <div className="mb-3">
+                                    {auth.role.some(r => ["Administrator", "Superadmin"].includes(r)) && (
+                                        <>
+                                            <Button
+                                                type="button"
+                                                onClick={handleStatusChange}
+                                                isLoading={processing}
+                                                className={`btn btn-sm border me-2 ${isActive ? "btn-danger" : "btn-success"
+                                                    }`}
+                                            >
+                                                <Icon icon="ic:baseline-power-settings-new" className="me-2 " width="20" height="20" />  {isActive ? t("Deactivate") : t("Activate")}
+                                            </Button>
+
+                                            <Button
+                                                type="button"
+                                                onClick={handleSetAsAdmin}
+                                                isLoading={processing}
+                                                className={`btn btn-sm border mr-3 ${isAdmin ? "btn-warning" : "btn-success"
+                                                    }`}
+                                            >
+                                                <Icon icon={!isAdmin ? "mdi:account-arrow-up" : "mdi:account-arrow-down"} width="20" height="20" />  {!isAdmin ? t("Set As Admin") : t("Set As Employee")}
+                                            </Button>
+
+                                        </>
+                                    )}
+                                </div>
                             </div>
                             <div className="mt-24">
                                 <h6 className="text-xl mb-16">{t('Employee Info')}</h6>
@@ -225,14 +262,8 @@ export default function Index({ employee, positions, ranks, grades }) {
                                             : {employee?.rank?.name || '-'}
                                         </span>
                                     </li>
-                                    <li className="d-flex align-items-center gap-1 mb-12">
-                                        <span className="w-30 text-md fw-semibold text-primary-light">
-                                            {t('Grade')}
-                                        </span>
-                                        <span className="w-70 text-secondary-light fw-medium">
-                                            : {employee?.grade?.name || '-'}
-                                        </span>
-                                    </li>
+
+
                                     {!isActive && (
                                         <li className="d-flex align-items-center gap-1 mb-12">
                                             <span className="w-30 text-md fw-semibold text-primary-light">
@@ -402,7 +433,7 @@ export default function Index({ employee, positions, ranks, grades }) {
                                     tabIndex={0}
                                 >
                                     <div className="row">
-                                        <RankHistory ranks={ranks} grades={grades} employee={employee} />
+                                        <RankHistory ranks={ranks} employee={employee} />
                                     </div>
                                 </div>
                             </div>

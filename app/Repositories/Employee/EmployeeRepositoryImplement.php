@@ -35,11 +35,17 @@ class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
             // 1. Save Employee
             $employee =  $this->saveEmployee($request);
             // 2. Save Position History
-            $this->savePositionHistory($request, $employee);
-            // 3. Save Rank History
-            $this->saveRankHistory($request, $employee);
+            if ($request->filled('position_id')) {
+                $this->savePositionHistory($request, $employee);
+            }
+            // 3. Save Rank History (PANGKAT)
+            if ($request->filled('rank_id')) {
+                $this->saveRankHistory($request, $employee);
+            }
             // Save Last Education History
-            $this->saveLastEducationHistory($request, $employee);
+            if ($request->filled('university_name')) {
+                $this->saveLastEducationHistory($request, $employee);
+            }
             return true;
         });
     }
@@ -47,25 +53,35 @@ class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
     public function deleteEmployee($employee)
     {
         DB::transaction(function () use ($employee) {
-            $fileFields = [
+
+            $relations = [
                 'positionHistories' => 'position_sk_file',
                 'rankHistories' => 'rank_sk_file',
                 'educationHistories' => 'degree_certificate_file',
                 'trainingHistories' => 'training_certificate_file',
             ];
+            foreach ($relations as $relation => $fileField) {
+                $employee->$relation?->each(function ($item) use ($fileField) {
 
-            foreach ($fileFields as $relation => $field) {
-                $employee->$relation
-                    ->pluck($field)
-                    ->filter()
-                    ->each(fn($file) => Storage::delete($file));
+                    // hapus file jika ada
+                    if (!empty($item->$fileField)) {
+                        Storage::delete($item->$fileField);
+                    }
+
+                    // hapus record via repository
+                    $this->appRepository->deleteOneModel($item);
+                });
             }
             if ($employee->user?->photo) {
                 Storage::delete($employee->user->photo);
             }
+            if ($employee->user) {
+                $this->appRepository->deleteOneModel($employee->user);
+            }
             $this->appRepository->deleteOneModel($employee);
         });
     }
+
 
     public function savePositionHistory($request, $employee)
     {
@@ -94,7 +110,6 @@ class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
             [
                 'employee_id' => $employee->id,
                 'rank_id' => $request->rank_id,
-                'grade_id' => $request->grade_id,
                 'appointment_date' => $request->rank_appointment_date,
                 'rank_sk_number' => $request->rank_sk_number,
                 'rank_sk_date' => $request->rank_sk_date,
@@ -164,7 +179,6 @@ class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
             'user_id' => $user->id,
             'position_id' => $request->position_id,
             'rank_id' => $request->rank_id,
-            'grade_id' => $request->grade_id,
             'gender' => $request->gender,
             'born_place' => $request->born_place,
             'born_date' => $request->born_date,

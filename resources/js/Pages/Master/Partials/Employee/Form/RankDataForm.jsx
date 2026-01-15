@@ -4,14 +4,14 @@ import Select from 'react-select';
 import SingleFileUpload from '../../../../../src/components/ui/SingleFileUpload';
 import ErrorMessage from "../../../../../src/components/ui/ErrorMessage";
 
-export default function RankDataForm({ data, setData, errors, setError, clearErrors, ranks, grades }) {
+export default function RankDataForm({ data, setData, errors, setError, clearErrors, ranks}) {
     const { t } = useTranslation();
 
     return (
         <>
             {/* Rank */}
             <div className="row mb-3">
-                <div className="col-6">
+                <div className="col-12">
                     <label htmlFor="rank" className="form-label">{t('Rank')}</label>
                     <Select
                         options={ranks}
@@ -30,26 +30,6 @@ export default function RankDataForm({ data, setData, errors, setError, clearErr
                     />
                     {errors.rank_id && <ErrorMessage message={errors.rank_id} />}
                 </div>
-                <div className="col-6">
-                    <label htmlFor="rank" className="form-label">{t('Grade')}</label>
-                    <Select
-                        options={grades}
-                        getOptionLabel={(grade) => grade.name}
-                        getOptionValue={(grade) => grade.id}
-                        onChange={(option) => {
-                            clearErrors('grade_id');
-                            setData('grade_id', option ? option.id : '');
-                        }}
-                        placeholder={t('Select Grade')}
-                        isSearchable={true}
-                        isClearable={true}
-                        value={
-                            grades.find(option => option.id === data.grade_id) || null
-                        }
-                    />
-                    {errors.grade_id && <ErrorMessage message={errors.grade_id} />}
-                </div>
-
             </div>
             <div className="row mb-3">
                 <div className="col-4">

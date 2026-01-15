@@ -85,6 +85,12 @@ export default function Menu({ ...props }) {
                                     <span>{t('Employee')}</span>
                                 </Link>
                             </li>
+                            <li>
+                                <Link href={route('report.trainings.index')} className={isActive('report.trainings.*')}>
+                                    <i className='ri-circle-fill circle-icon text-primary-600 w-auto' />
+                                    <span>{t('Training')}</span>
+                                </Link>
+                            </li>
                         </ul>
                     </li>
                     {/* {hasAnyRole(['Admin']) && (

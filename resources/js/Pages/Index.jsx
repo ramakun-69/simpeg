@@ -116,20 +116,6 @@ export default function Index() {
                     </div>
                 </div>
 
-                {/* Pie Chart: Grade / Golongan */}
-                <div className="col-lg-4">
-                    <div className="card shadow-sm border-0">
-                        <div className="card-body">
-                            <h6>{t("Rekapitulation Per Grade")}</h6>
-                            <Chart
-                                options={createPieOptions(Object.keys(gradeCounts))}
-                                series={Object.values(gradeCounts)}
-                                type="donut"
-                                height={300}
-                            />
-                        </div>
-                    </div>
-                </div>
 
             </div>
         </AppLayout>

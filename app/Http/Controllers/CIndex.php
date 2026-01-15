@@ -15,7 +15,7 @@ class CIndex extends Controller
     public function index()
     {
         // Ambil semua employee sekali saja
-        $employees = Employee::with(['grade', 'position'])->get();
+        $employees = Employee::with(['position'])->get();
 
         // === Rekap Berdasarkan Division ===
         $divisionCounts = $employees
@@ -27,11 +27,7 @@ class CIndex extends Controller
             ->groupBy(fn($emp) => $emp->gender ?: 'N/A')
             ->map->count();
 
-        // === Rekap Berdasarkan Grade / Golongan ===
-        $gradeCounts = $employees
-            ->groupBy(fn($emp) => $emp->grade?->name ?? 'N/A')
-            ->map->count();
-
+      
         // === Jumlah Auditor ===
         $auditorCount = $employees->filter(
             fn($emp) => str_contains(strtoupper($emp->position?->name), 'AUDITOR')
@@ -46,7 +42,6 @@ class CIndex extends Controller
         return inertia('Index', [
             'divisionCounts' => $divisionCounts,
             'genderCounts'   => $genderCounts,
-            'gradeCounts'    => $gradeCounts,
             'employees'          => $employees,
             'auditorCount'   => $auditorCount,
             'ppupdCount'     => $ppupdCount,

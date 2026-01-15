@@ -11,6 +11,7 @@ use App\Http\Controllers\History\CPositionHistory;
 use App\Http\Controllers\History\CTrainingHistory;
 use App\Http\Controllers\History\CEducationHistory;
 use App\Http\Controllers\Report\CEmployeeReport;
+use App\Http\Controllers\Report\CTrainingReport;
 
 Route::middleware(['auth'])->group(function () {
     Route::middleware('role:Superadmin|Administrator')->group(function () {
@@ -30,6 +31,8 @@ Route::middleware(['auth'])->group(function () {
             ->name('employees.change-photo');
         Route::post('employees/change-status', [CEmployee::class, 'changestatus'])
             ->name('employees.change-status');
+        Route::post('employees/change-role', [CEmployee::class, 'changeRole'])
+            ->name('employees.change-role');
 
         Route::resource('employees', CEmployee::class)->middleware('role:Superadmin|Administrator');
 
@@ -49,6 +52,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('report')->name('report.')->middleware('role:Superadmin|Administrator')->group(function () {
         Route::post('employees/export', [CEmployeeReport::class, 'store'])->name('employees.export');
+        Route::post('trainings/export', [CTrainingReport::class, 'store'])->name('trainings.export');
         Route::resource('employees', CEmployeeReport::class);
+        Route::resource('trainings', CTrainingReport::class);
     });
 });

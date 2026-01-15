@@ -8,7 +8,7 @@ import PositionDataForm from "./PositionDataForm";
 import RankDataForm from "./RankDataForm";
 import LastEducationDataForm from "./LastEducationDataForm";
 
-export default function EmployeeForm({ employee, onSuccess, positions, ranks, grades, closeModal }) {
+export default function EmployeeForm({ employee, onSuccess, positions, ranks, closeModal }) {
     const { t } = useTranslation();
     const [currentStep, setCurrentStep] = useState(1);
     const { data, setData, post, processing, errors, setError, reset, clearErrors } = useForm({
@@ -38,7 +38,6 @@ export default function EmployeeForm({ employee, onSuccess, positions, ranks, gr
         // Rank Data
         rank_history_id: employee?.last_rank?.id ?? null,
         rank_id: employee?.rank_id ?? '',
-        grade_id: employee?.grade_id ?? '',
         rank_appointment_date: employee?.last_rank?.appointment_date ?? '',
         rank_sk_number: employee?.last_rank?.rank_sk_number,
         rank_sk_date: employee?.last_rank?.rank_sk_date,
@@ -59,13 +58,13 @@ export default function EmployeeForm({ employee, onSuccess, positions, ranks, gr
     });
     const steps = [
         { id: 1, label: t('Employee Data') },
-        { id: 2, label: t('Position Data') },
-        { id: 3, label: t('Rank Data') },
-        { id: 4, label: t('Last Education Data') }
+        // { id: 2, label: t('Position Data') },
+        // { id: 3, label: t('Rank Data') },
+        // { id: 4, label: t('Last Education Data') }
     ];
 
     const stepRoutes = {
-        1: "master-data.employees.store.employee-data",
+        1: "master-data.employees.store",
         2: "master-data.employees.store.position-data",
         3: "master-data.employees.store.rank-data",
         4: "master-data.employees.store"
@@ -95,34 +94,15 @@ export default function EmployeeForm({ employee, onSuccess, positions, ranks, gr
         <>
             <div className="form-wizard">
                 <form>
-                    <div className='form-wizard-header overflow-x-auto scroll-sm pb-8 my-32'>
-                        {/* Step */}
-                        <ul className="list-unstyled form-wizard-list style-two d-flex flex-nowrap">
-                            {steps.map((step, index) => {
-                                return (
-
-                                    <li key={step.id}
-                                        className={`form-wizard-list__item ${index + 1 < currentStep ? "activated" : ""} ${currentStep === index + 1 ? "active" : ""}`}
-                                    >
-                                        <div className="form-wizard-list__line">
-                                            <span className="count">{index + 1}</span>
-                                        </div>
-                                        <span className="text text-xs fw-semibold">
-                                            {step.label}
-                                        </span>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </div>
+                   
                     {/* Field */}
                     {steps.map((step, index) => {
                         return (
                             <fieldset key={step.id} className={`wizard-fieldset ${currentStep === index + 1 ? "show" : ""}`}>
                                 {currentStep === 1 && <EmployeeDataForm data={data} setData={setData} errors={errors} setError={setError} clearErrors={clearErrors} />}
-                                {currentStep === 2 && <PositionDataForm data={data} setData={setData} errors={errors} setError={setError} clearErrors={clearErrors} positions={positions} ranks={ranks} grades={grades} />}
+                                {/* {currentStep === 2 && <PositionDataForm data={data} setData={setData} errors={errors} setError={setError} clearErrors={clearErrors} positions={positions} ranks={ranks} grades={grades} />}
                                 {currentStep === 3 && <RankDataForm data={data} setData={setData} errors={errors} setError={setError} clearErrors={clearErrors} ranks={ranks} grades={grades} />}
-                                {currentStep === 4 && <LastEducationDataForm data={data} setData={setData} errors={errors} setError={setError} clearErrors={clearErrors} />}
+                                {currentStep === 4 && <LastEducationDataForm data={data} setData={setData} errors={errors} setError={setError} clearErrors={clearErrors} />} */}
                             </fieldset>
                         )
 

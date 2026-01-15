@@ -33,7 +33,7 @@ class EmployeeReport implements FromCollection, WithHeadings, WithTitle, WithSty
             'Nama' => $employee->name,
             'Jenis Kelamin' => __($employee->gender),
             'Divisi' => $employee->division,
-            'Jabatan' => $employee?->position?->name ?? '-',
+            'Jabatan' => $employee?->current_position?->name ?? '-',
             'Pangkat' => $employee?->rank?->name ?? '-',
         ]);
     }
