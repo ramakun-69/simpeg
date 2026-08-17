@@ -21,28 +21,44 @@ class CLogin extends Controller
     public function authenticate(LoginRequest $request)
     {
         return $this->safeInertiaExecute(function () use ($request) {
+            $intendedUrl = $request->session()->get('url.intended');
+
             $credentials = [
-                filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username' => $request->username,
+                filter_var($request->username, FILTER_VALIDATE_EMAIL)
+                    ? 'email'
+                    : 'username' => $request->username,
                 'password' => $request->password,
             ];
 
             if (!Auth::attempt($credentials, $request->boolean('remember'))) {
-                return back()->withErrors(['username' => __('auth.failed')])->withInput();
+                return back()
+                    ->withErrors(['username' => __('auth.failed')])
+                    ->withInput();
             }
+
+            $request->session()->regenerate();
 
             $user = Auth::user();
             $employee = $user->employee;
 
             if (!$employee || $employee->status !== 'Active') {
                 Auth::logout();
-                return back()->withErrors(['username' => __('Your account has been disabled. Please contact the admin')]);
+
+                return back()->withErrors([
+                    'username' => __('Your account has been disabled. Please contact the admin'),
+                ]);
             }
 
             $target = $user->hasAnyRole(['Administrator', 'Superadmin'])
                 ? route('dashboard')
                 : route('profile.index');
 
-            return redirect()->intended($target)->with('success', __('Login successful'));
+            if ($intendedUrl && parse_url($intendedUrl, PHP_URL_PATH) === '/oauth/authorize') {
+                return Inertia::location($intendedUrl);
+            }
+
+            return redirect()->to($intendedUrl ?: $target)
+                ->with('success', __('Login successful'));
         });
     }
 

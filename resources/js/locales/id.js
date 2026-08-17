@@ -329,6 +329,10 @@ export default {
         "Set As Admin" : "Jadikan Sebagai Admin",
         "Set As Employee" : "Jadikan Sebagai Pegawai",
         "Training" : "Diklat",
-        "Training Report" : "Laporan Diklat"
+        "Training Report" : "Laporan Diklat",
+        "Something went wrong" : "Terjadi Kesalahan",
+        "Application Access" : "Akses Aplikasi",
+        "Applications Selected" : "Aplikasi Terpilih",
+        "No Access" : "Tidak Ada Akses"
     },
 };

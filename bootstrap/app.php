@@ -22,9 +22,18 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/datatable.php'))
                 ->group(base_path('routes/trash.php'))
                 ->group(base_path('routes/auth.php'));
+            Route::prefix('api')
+                ->middleware('api')
+                ->group(base_path('routes/api.php'));
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Passport memakai middleware auth. Jika user belum login,
+        // arahkan ke halaman login SIMPEG (Auth/Login.jsx).
+        $middleware->redirectGuestsTo(
+            fn (Request $request) => route('login')
+        );
+
         $middleware->redirectUsersTo(
             fn(Request $request) =>
             in_array($request->user()?->role, ['Administrator', 'Superadmin'])

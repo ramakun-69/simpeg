@@ -13,4 +13,5 @@ interface EmployeeRepository extends Repository
    public function saveRankHistory($request, $employee);
    public function saveLastEducationHistory($request, $employee);
    public function saveTrainingHistory($request, $employee);
+   public function getEmployeeList();
 }

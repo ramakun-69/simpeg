@@ -48,9 +48,6 @@ class LoginRequest extends FormRequest
                 case 'password':
                     $dataValidate[$key] .= '|min:6';
                     break;
-                case 'gRecaptcha':
-                    $dataValidate[$key] .= '|captcha';
-                    break;
             }
         }
         return $dataValidate;

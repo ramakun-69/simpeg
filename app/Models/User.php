@@ -12,11 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Passport\Contracts\OAuthenticatable;
+use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements OAuthenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasUuids, HasRoles;
+    use HasFactory, Notifiable, HasUuids, HasRoles, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -62,5 +64,28 @@ class User extends Authenticatable
         }
 
         return asset('/assets/images/users/user-default.jpg');
+    }
+    public function applicationAccesses()
+    {
+        return $this->hasMany(ApplicationAccess::class);
+    }
+
+    public function hasApplicationAccess(string $applicationCode): bool
+    {
+        return $this->applicationAccesses()
+            ->whereHas('application', function ($query) use ($applicationCode) {
+                $query->where('code', $applicationCode);
+            })
+            ->exists();
+    }
+
+    public function isApplicationAdmin(string $applicationCode): bool
+    {
+        return $this->applicationAccesses()
+            ->where('is_admin', true)
+            ->whereHas('application', function ($query) use ($applicationCode) {
+                $query->where('code', $applicationCode);
+            })
+            ->exists();
     }
 }

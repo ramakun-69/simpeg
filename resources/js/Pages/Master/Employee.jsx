@@ -16,6 +16,7 @@ import { confirmAlert } from "../../src/components/ui/SweetAlert";
 import { notifyError, notifySuccess } from "../../src/components/ui/Toastify";
 import EmployeeForm from "./Partials/Employee/Form/EmployeeForm";
 import { route } from "ziggy-js";
+import DrawerPanel from "./Partials/Employee/ApplicationAccess/DrawerPanel";
 
 export default function Employee({ positions, ranks }) {
     const { t } = useTranslation();
@@ -46,74 +47,112 @@ export default function Employee({ positions, ranks }) {
             setIsLoading(false);
         });
     };
+    // Applicatin Access State
+    const [applicationAccess, setApplicationAccess] = useState({
+        show: false,
+        user: null,
+        applications: [],
+        accesses: [],
+    });
     useEffect(() => {
         loadTableData();
     }, [currentPage, rowsPerPage, search]);
     const COLUMN = [
         {
-            name: 'No',
+            name: "No",
             cell: (row, index) => (currentPage - 1) * rowsPerPage + index + 1,
             sortable: true,
-            width: '100px',
+            width: "100px",
             style: {
-                textAlign: 'center',
+                textAlign: "center",
             },
         },
         {
-            name: t('Photo'),
-            cell: (row) => (
+            name: t("Photo"),
+            cell: (row) =>
                 row?.user?.photo ? (
-                    <img src={row?.user?.photo_url} alt={row.name} className="img-thumbnail" style={{ width: '50px', height: '50px' }} />
-                ) : null
-            ),
+                    <img
+                        src={row?.user?.photo_url}
+                        alt={row.name}
+                        className="img-thumbnail"
+                        style={{ width: "50px", height: "50px" }}
+                    />
+                ) : null,
         },
         {
-            name: t('NIP'),
-            selector: row => row.nip,
+            name: t("NIP"),
+            selector: (row) => row.nip,
             width: "200px",
             sortable: true,
         },
         {
-            name: t('Name'),
-            selector: row => row.name,
+            name: t("Name"),
+            selector: (row) => row.name,
             width: "200px",
             sortable: true,
         },
         {
-            name: t('Gender'),
-            selector: row => t(row?.gender),
+            name: t("Gender"),
+            selector: (row) => t(row?.gender),
             sortable: true,
         },
         {
-            name: t('Division'),
-            selector: row => row.division,
+            name: t("Division"),
+            selector: (row) => row.division,
             sortable: true,
         },
         {
-            name: t('Position'),
-            selector: row => `${row?.position?.name ?? '-'}`,
+            name: t("Position"),
+            selector: (row) => `${row?.position?.name ?? "-"}`,
             width: "150px",
             sortable: true,
         },
         {
-            name: t('Rank'),
-            selector: row => `${row?.rank?.name ?? '-'}`,
+            name: t("Rank"),
+            selector: (row) => `${row?.rank?.name ?? "-"}`,
             width: "200px",
             sortable: true,
         },
 
         {
-            name: t('Actions'),
+            name: t("Actions"),
+            width: "250px",
             cell: (row) => (
                 <>
-                    <EditButton onClick={() => router.get(route('master-data.employees.edit', row.id))} isLoading={isLoading} />
-                    {row.id !== auth.user.id && (
-                        <DeleteButton onClick={() => handleDelete(row.id)} isLoading={isLoading} />
+                    <EditButton
+                        onClick={() =>
+                            router.get(
+                                route("master-data.employees.edit", row.id),
+                            )
+                        }
+                        isLoading={isLoading}
+                    />
+                    {row?.user?.id && (
+                        <Button
+                            type="button"
+                            className="w-32-px h-32-px me-8 bg-info-100 text-info-main rounded-circle d-inline-flex align-items-center justify-content-center"
+                            onClick={() => handleApplicationAccess(row)}
+                            disabled={isLoading}
+                            loadingType={2}
+                        >
+                            <Icon
+                                icon="mdi:shield-key-outline"
+                                className="me-2"
+                                width={20}
+                                height={20}
+                            />
+                        </Button>
+                    )}
+                    {row.user_id !== auth.user.id && (
+                        <DeleteButton
+                            onClick={() => handleDelete(row.id)}
+                            isLoading={isLoading}
+                        />
                     )}
                 </>
             ),
             sortable: true,
-        }
+        },
     ];
     const { delete: destroy } = useForm({});
     const handleShowModal = (employee = null) => {
@@ -144,23 +183,88 @@ export default function Employee({ positions, ranks }) {
 
     const reload = () => loadTableData();
 
+    const handleApplicationAccess = async (employee) => {
+        const user = employee?.user;
+        if (!user?.id) {
+            notifyError(t("User account not found"), "bottom-center");
+            return;
+        }
+       
+        try {
+            const response = await axios.get(
+                route("master-data.employees.application-access", user.id),
+            );
+
+            setApplicationAccess({
+                show: true,
+                user: response.data.user,
+                applications: response.data.applications,
+                accesses: response.data.accesses,
+            });
+        } catch (error) {
+            notifyError(
+                error.response?.data?.message ?? t("Something went wrong"),
+                "bottom-center",
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleCloseApplicationAccess = () => {
+        setApplicationAccess({
+            show: false,
+            user: null,
+            applications: [],
+            accesses: [],
+        });
+    };
+
+    const handleSaveApplicationAccess = async (accesses) => {
+        try {
+           const {data}= await axios.put(
+                route("master-data.employees.application-access.update", applicationAccess.user.id),
+                { accesses },
+            );
+            notifySuccess(data?.message, "bottom-center");
+            handleCloseApplicationAccess();
+        } catch (error) {
+            notifyError(error.response?.data?.message ?? t("Something went wrong"), "bottom-center");
+        } finally {
+            setIsLoading(false);
+        }
+    };
     return (
         <AppLayout>
-            <Breadcrumb title={t('Employee')} subtitle={t('Employee Management')} />
+            <Breadcrumb
+                title={t("Employee")}
+                subtitle={t("Employee Management")}
+            />
             <div className="container">
                 <div className="d-flex justify-content-end mb-3">
-                    <Button type="button" className="btn btn-sm btn-primary" onClick={() => handleShowModal()}>
-                        <Icon icon="line-md:plus" className="me-2" width="20" height="20" />
-                        {t('Add New Employee')}
+                    <Button
+                        type="button"
+                        className="btn btn-sm btn-primary"
+                        onClick={() => handleShowModal()}
+                    >
+                        <Icon
+                            icon="line-md:plus"
+                            className="me-2"
+                            width="20"
+                            height="20"
+                        />
+                        {t("Add New Employee")}
                     </Button>
-                
                 </div>
                 <div className="card">
                     <div className="card-body">
                         <div className="row">
                             <div className="col-12 d-flex justify-content-end">
                                 <div className="col-md-4">
-                                    <Search search={search} setSearch={setSearch} />
+                                    <Search
+                                        search={search}
+                                        setSearch={setSearch}
+                                    />
                                 </div>
                             </div>
                             <div className="col-12">
@@ -169,13 +273,14 @@ export default function Employee({ positions, ranks }) {
                                     columns={COLUMN}
                                     data={tableData}
                                     progressPending={isLoading}
-                                    noDataComponent={isLoading ? (
-                                        <Loading />
-                                    ) : search && tableData.length === 0 ? (
-                                        t('datatable.zeroRecords')
-                                    ) : (
-                                        t('datatable.emptyTable')
-                                    )
+                                    noDataComponent={
+                                        isLoading ? (
+                                            <Loading />
+                                        ) : search && tableData.length === 0 ? (
+                                            t("datatable.zeroRecords")
+                                        ) : (
+                                            t("datatable.emptyTable")
+                                        )
                                     }
                                     searchable
                                     defaultSortField="name"
@@ -184,20 +289,22 @@ export default function Employee({ positions, ranks }) {
                                     paginationServer
                                     paginationTotalRows={totalRows}
                                     paginationPerPage={rowsPerPage}
-                                    onChangePage={page => setCurrentPage(page)}
+                                    onChangePage={(page) =>
+                                        setCurrentPage(page)
+                                    }
                                     onChangeRowsPerPage={(newPerPage, page) => {
                                         setRowsPerPage(newPerPage);
                                         setCurrentPage(page);
                                     }}
                                     highlightOnHover
                                     persistTableHead
-                                    striped />
+                                    striped
+                                />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
 
             {/* MODAL */}
             <Modal
@@ -218,6 +325,16 @@ export default function Employee({ positions, ranks }) {
                     ranks={ranks}
                 />
             </Modal>
+
+            <DrawerPanel
+                user={applicationAccess.user}
+                applications={applicationAccess.applications}
+                accesses={applicationAccess.accesses}
+                show={applicationAccess.show}
+                onClose={handleCloseApplicationAccess}
+                onSubmit={handleSaveApplicationAccess}
+                isLoading={isLoading}
+            />
         </AppLayout>
     );
 }

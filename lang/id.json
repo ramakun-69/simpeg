@@ -283,5 +283,8 @@
     "Role Has Been Changed" : "Peran Telah Diubah",
     "Training Report" : "Laporan Diklat",
     "Issuing Institution" : "Lembaga Yang Mengeluarkan",
-    "Training Name" : "Nama Diklat"
+    "Training Name" : "Nama Diklat",
+    "Application access updated successfully": "Akses aplikasi berhasil diperbarui",
+    "The OAuth client is not linked to an active application.": "Klien OAuth tidak tertaut ke aplikasi yang aktif.",
+    "User has no access to this application.": "Pengguna tidak memiliki akses ke aplikasi ini."
 }

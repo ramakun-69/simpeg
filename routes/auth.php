@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Auth\CLogin;
 use App\Http\Controllers\Auth\CForgotPassword;
+use App\Http\Controllers\Auth\CLogin;
 use App\Http\Controllers\Auth\CResetPassword;
 use App\Http\Controllers\Auth\CVerifyOTP;
+use App\Http\Controllers\Auth\SsoLogoutController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest'])->group(function () {
@@ -22,3 +23,5 @@ Route::middleware(['guest'])->group(function () {
         ->name('verify-otp.store');
 });
 Route::post('/logout', [CLogin::class, 'logout'])->name('logout');
+Route::get('/oauth/logout', [SsoLogoutController::class, 'logout'])
+    ->name('oauth.logout');

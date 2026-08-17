@@ -29,6 +29,29 @@ class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
         $this->appRepository = $appRepository;
     }
 
+    public function getEmployeeList()
+    {
+        $search = trim((string) request()->query('search', ''));
+
+        return Employee::query()
+            ->with('user:id,username,name,email')
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query
+                        ->where('nip', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%")
+                        ->orWhereHas('user', function ($query) use ($search) {
+                            $query
+                                ->where('username', 'like', "%{$search}%")
+                                ->orWhere('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->limit(20)
+            ->get();
+    }
+
     public function employeeStore($request)
     {
         DB::transaction(function () use ($request) {
