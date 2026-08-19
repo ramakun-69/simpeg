@@ -49,16 +49,12 @@ class CLogin extends Controller
                 ]);
             }
 
-            $target = $user->hasAnyRole(['Administrator', 'Superadmin'])
-                ? route('dashboard')
-                : route('profile.index');
-
+            $target = $user->hasAnyRole(['Administrator', 'Superadmin']) ? route('dashboard') :  route('profile.index');
             if ($intendedUrl && parse_url($intendedUrl, PHP_URL_PATH) === '/oauth/authorize') {
                 return Inertia::location($intendedUrl);
             }
 
-            return redirect()->to($intendedUrl ?: $target)
-                ->with('success', __('Login successful'));
+            return redirect()->to($intendedUrl ?: $target)->with('success', __('Login successful'));
         });
     }
 

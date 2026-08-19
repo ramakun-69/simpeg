@@ -17,7 +17,9 @@ use App\Models\Position;
 use App\Models\Rank;
 use App\Models\User;
 use App\Repositories\App\AppRepository;
+use App\Repositories\Application\ApplicationRepository;
 use App\Repositories\Employee\EmployeeRepository;
+use App\Services\Employee\EmployeeService;
 use App\Traits\ResponseOutput;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
@@ -27,12 +29,13 @@ use Illuminate\Support\Facades\DB;
 class CEmployee extends Controller
 {
     use ResponseOutput, ValidatesRequests;
-    protected $employeeRepository, $appRepository;
-    public function __construct(EmployeeRepository $employeeRepository, AppRepository $appRepository)
-    {
-        $this->employeeRepository = $employeeRepository;
-        $this->appRepository = $appRepository;
-    }
+
+    public function __construct(
+        protected EmployeeRepository $employeeRepository,
+        protected ApplicationRepository $applicationRepository,
+        protected EmployeeService $employeeService,
+        protected AppRepository $appRepository
+    ) {}
     /**
      * Display a listing of the resource.
      */
@@ -121,7 +124,7 @@ class CEmployee extends Controller
         $accesses = $user->applicationAccesses()
             ->whereIn('application_id', $applications->pluck('id'))
             ->get(['application_id', 'is_admin'])
-            ->map(fn (ApplicationAccess $access) => [
+            ->map(fn(ApplicationAccess $access) => [
                 'application_id' => $access->application_id,
                 'is_admin' => (bool) $access->is_admin,
             ])
@@ -134,30 +137,20 @@ class CEmployee extends Controller
         ]);
     }
 
-    public function updateApplicationAccess(ApplicationAccessRequest $request, User $user)
-    {
-        return $this->safeExecute(function() use($request, $user){
+    public function assignApplication(ApplicationAccessRequest $request,User $user
+) {
+        return $this->safeExecute(function () use ($request, $user) {
             $data = $request->validated();
-            $accesses = collect($data['accesses'] ?? [])->unique('application_id');
-            $applicationIds = Application::query()
-                ->where('is_active', true)
-                ->whereIn('id', $accesses->pluck('application_id'))
-                ->pluck('id');
-
-            DB::transaction(function () use ($user, $applicationIds, $accesses) {
-                $user->applicationAccesses()->whereNotIn('application_id', $applicationIds)->delete();
-
-                foreach ($accesses as $access) {
-                    if (! $applicationIds->contains($access['application_id'])) continue;
-                    $user->applicationAccesses()->updateOrCreate(
-                        ['application_id' => $access['application_id']],
-                        ['is_admin' => (bool) ($access['is_admin'] ?? false)],
-                    );
-                }
-            });
-            return response()->json(['message' => __('Application access updated successfully')]);
+            $this->employeeService->assignApplication($data, $user);
+            $applicationIds = collect($data['accesses'] ?? [])
+                ->pluck('application_id')
+                ->unique()
+                ->values()
+                ->all();
+            return response()->json([
+                'message' => __('Application access updated successfully'),
+            ]);
         });
-     
     }
     /**
      * Show the form for editing the specified resource.

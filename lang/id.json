@@ -286,5 +286,9 @@
     "Training Name" : "Nama Diklat",
     "Application access updated successfully": "Akses aplikasi berhasil diperbarui",
     "The OAuth client is not linked to an active application.": "Klien OAuth tidak tertaut ke aplikasi yang aktif.",
-    "User has no access to this application.": "Pengguna tidak memiliki akses ke aplikasi ini."
+    "User has no access to this application.": "Pengguna tidak memiliki akses ke aplikasi tersebut.",
+    "Application is required." : "Aplikasi Diperlukan",
+    "Use application ID or application code, not both.": "Gunakan ID aplikasi atau kode aplikasi, jangan keduanya.",
+    "Application is not available." : "Aplikasi tidak tersedia",
+    "Failed to sync application :name.": "Gagal menyinkronkan aplikasi :name."
 }

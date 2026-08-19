@@ -48,7 +48,7 @@ class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
                         });
                 });
             })
-            ->limit(20)
+            ->orderBy('name')
             ->get();
     }
 

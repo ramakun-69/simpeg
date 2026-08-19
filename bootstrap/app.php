@@ -1,15 +1,16 @@
 <?php
 
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\LocalizationMiddleware;
-use Spatie\Permission\Middleware\RoleMiddleware;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Laravel\Passport\Http\Middleware\CheckToken;
 use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -28,23 +29,15 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Passport memakai middleware auth. Jika user belum login,
-        // arahkan ke halaman login SIMPEG (Auth/Login.jsx).
-        $middleware->redirectGuestsTo(
-            fn (Request $request) => route('login')
-        );
-
-        $middleware->redirectUsersTo(
-            fn(Request $request) =>
-            in_array($request->user()?->role, ['Administrator', 'Superadmin'])
-                ? route('dashboard')
-                : route('profile.index')
-        );
+      
+        $middleware->redirectGuestsTo(fn (Request $request) => route('login'));
+        $middleware->redirectUsersTo( fn(Request $request) =>in_array($request->user()?->role, ['Administrator', 'Superadmin']) ? route('dashboard') : route('profile.index'));
         $middleware->web(append: [
             LocalizationMiddleware::class,
             HandleInertiaRequests::class,
         ]);
         $middleware->alias([
+            'client' => CheckToken::class,
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,

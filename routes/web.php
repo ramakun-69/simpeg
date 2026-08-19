@@ -36,7 +36,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('employees/{user}/application-access', [CEmployee::class, 'applicationAccess'])
             ->middleware('role:Superadmin|Administrator')
             ->name('employees.application-access');
-        Route::put('employees/{user}/application-access', [CEmployee::class, 'updateApplicationAccess'])
+        Route::put('employees/{user}/application-access', [CEmployee::class, 'assignApplication'])
             ->middleware('role:Superadmin|Administrator')
             ->name('employees.application-access.update');
         Route::resource('employees', CEmployee::class)->middleware('role:Superadmin|Administrator');

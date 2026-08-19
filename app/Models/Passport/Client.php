@@ -5,6 +5,8 @@ namespace App\Models\Passport;
 use App\Models\Application;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Passport\Client as PassportClient;
 
@@ -18,12 +20,20 @@ class Client extends PassportClient
             ->where('is_active', true)
             ->first();
 
-        abort_unless($application, 403, __('OAuth client is not linked to an active application.'));
-        abort_unless(
-            $user instanceof User && $user->hasApplicationAccess($application->code),
-            403,
-            __('User has no access to this application.'),
-        );
+        if (!$application) {
+            $this->logoutAndRedirect(__('OAuth client is not linked to an active application.'));
+        }
+      
         return true;
+    }
+    private function logoutAndRedirect(string $message): never
+    {
+        Auth::guard('web')->logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        throw new HttpResponseException(redirect()->route('login')->with('error', $message)
+        );
     }
 }
