@@ -21,7 +21,7 @@ class Client extends PassportClient
             ->first();
 
         if (!$application) {
-            $this->logoutAndRedirect(__('OAuth client is not linked to an active application.'));
+            $this->logoutAndRedirect(__('You do not have access to this application.'));
         }
       
         return true;
