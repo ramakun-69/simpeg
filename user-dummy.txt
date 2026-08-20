@@ -1,0 +1,36 @@
+LIST USER SIMPEG
+
+1. Administrator
+NIP      : 197001011990011001
+Bagian   : Sekretariat
+Role     : Superadmin
+
+2. Budi Santoso
+NIP      : 197501011995011002
+Bagian   : Sekretariat
+Role     : Employee
+WBS      : Sekretaris
+
+3. Candra Wijaya
+NIP      : 197803151998031003
+Bagian   : Irban 5
+Role     : Employee
+WBS      : Irban V
+
+4. Dedi Kurniawan
+NIP      : 198205201002011004
+Bagian   : Irban 5
+Role     : Employee
+WBS      : Tim Teknis
+
+5. Eko Prasetyo
+NIP      : 198407102005012005
+Bagian   : Irban 5
+Role     : Employee
+WBS      : Tim Teknis
+
+6. Fajar Hidayat
+NIP      : 196805121990031006
+Bagian   : Sekretariat
+Role     : Employee
+WBS      : Inspektur

@@ -1,0 +1,81 @@
+version: "3.9"
+
+services:
+  simpeg-app:
+    container_name: simpeg-app
+    image: simpeg:latest
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    working_dir: /var/www/
+    restart: unless-stopped
+    tty: true
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - default
+      - proxy
+
+  simpeg-nginx:
+    container_name: simpeg-nginx
+    image: nginx:stable-alpine
+    restart: unless-stopped
+    depends_on:
+      - simpeg-app
+    volumes:
+      - ./:/var/www/
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - default
+      - proxy
+
+  simpeg-queue:
+    container_name: simpeg-queue
+    image: simpeg:latest
+    working_dir: /var/www/
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: >
+      php artisan queue:work redis
+      --sleep=3
+      --tries=3
+      --timeout=300
+      --max-time=3600
+    volumes:
+      - ./:/var/www/
+    depends_on:
+      - simpeg-app
+    networks:
+      - default
+      - proxy
+
+  simpeg-scheduler:
+    container_name: simpeg-scheduler
+    image: simpeg:latest
+    working_dir: /var/www/
+    restart: unless-stopped
+    env_file:
+      - .env
+    command:
+      - php
+      - artisan
+      - schedule:work
+    volumes:
+      - ./:/var/www/
+    depends_on:
+      - simpeg-app
+    networks:
+      - default
+      - proxy
+
+networks:
+  proxy:
+    external: true
