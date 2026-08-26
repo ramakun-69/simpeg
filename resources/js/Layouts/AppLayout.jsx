@@ -102,12 +102,12 @@ const AppLayout = ({ children }) => {
                     <div>
                         <Link href='/' className='sidebar-logo'>
                             <img
-                                src={settings?.logo ? `/storage/${settings.logo}` : "/assets/images/logo.png"}
+                                src={settings?.logo ? `/storage/${settings.logo}` : "/assets/images/logo-sidebar.png"}
                                 alt='site logo'
                                 className='light-logo'
                             />
                             <img
-                                src={settings?.logo ? `/storage/${settings.logo}` : "/assets/images/logo.png"}
+                                src={settings?.logo ? `/storage/${settings.logo}` : "/assets/images/logo-sidebar.png"}
                                 alt='site logo'
                                 className='dark-logo'
                             />
