@@ -8,9 +8,7 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-        <link rel="icon" type="image/png"
-            href="{{ settings()->get('logo') ? '/storage/' . settings()->get('logo') : asset('assets/images/favicon.png') }}"
-            sizes="16x16">
+        <link rel="icon" type="image/png" href="{{ settings()->get('logo') ? '/storage/' . settings()->get('logo') : asset('assets/images/favicon.png') }}" sizes="16x16">
         <!-- remix icon font css  -->
         <link rel="stylesheet" href="{{ asset('assets') }}/css/remixicon.css">
         <!-- BootStrap css -->
