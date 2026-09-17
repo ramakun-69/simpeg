@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Employee;
+use App\Services\Employee\EmployeeService;
 use Illuminate\Http\Request;
 use App\Traits\ResponseOutput;
 use Illuminate\Support\Facades\Auth;
@@ -12,8 +13,12 @@ use Illuminate\Support\Facades\Session;
 class CIndex extends Controller
 {
     use ResponseOutput;
-    public function index()
+    public function index(EmployeeService $employeeService)
     {
+        if (!Auth::user()->hasAnyRole(['Superadmin', 'Administrator'])) {
+            return inertia('Dashboard/Index', $employeeService->getDashboard(Auth::user()));
+        }
+
         // Ambil semua employee sekali saja
         $employees = Employee::with(['position'])->get();
 

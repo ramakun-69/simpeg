@@ -49,7 +49,7 @@ class CLogin extends Controller
                 ]);
             }
 
-            $target = $user->hasAnyRole(['Administrator', 'Superadmin']) ? route('dashboard') :  route('profile.index');
+            $target = route('dashboard');
             if ($intendedUrl && parse_url($intendedUrl, PHP_URL_PATH) === '/oauth/authorize') {
                 return Inertia::location($intendedUrl);
             }

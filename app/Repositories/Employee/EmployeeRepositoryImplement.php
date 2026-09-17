@@ -29,6 +29,16 @@ class EmployeeRepositoryImplement extends Eloquent implements EmployeeRepository
         $this->appRepository = $appRepository;
     }
 
+    public function getDashboardEmployee($user)
+    {
+        return $user->employee()->with([
+            'user', 'position', 'rank', 'activeAssignment.position',
+            'positionHistories.position', 'rankHistories.rank',
+            'trainingHistories' => fn ($query) => $query->whereNull('deleted_at'),
+            'assignments' => fn ($query) => $query->with('position')->orderByDesc('letter_date'),
+        ])->first();
+    }
+
     public function getEmployeeList()
     {
         $search = trim((string) request()->query('search', ''));

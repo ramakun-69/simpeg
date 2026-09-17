@@ -31,7 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
       
         $middleware->redirectGuestsTo(fn (Request $request) => route('login'));
-        $middleware->redirectUsersTo( fn(Request $request) =>in_array($request->user()?->role, ['Administrator', 'Superadmin']) ? route('dashboard') : route('profile.index'));
+        $middleware->redirectUsersTo(fn (Request $request) => route('dashboard'));
         $middleware->web(append: [
             LocalizationMiddleware::class,
             HandleInertiaRequests::class,

@@ -14,10 +14,8 @@ use App\Http\Controllers\Report\CEmployeeReport;
 use App\Http\Controllers\Report\CTrainingReport;
 
 Route::middleware(['auth'])->group(function () {
-    Route::middleware('role:Superadmin|Administrator')->group(function () {
-        Route::get('/dashboard', [CIndex::class, 'index'])->name('dashboard');
-        Route::post('/set-language', [CIndex::class, 'setLanguage'])->name('set-language');
-    });
+    Route::get('/dashboard', [CIndex::class, 'index'])->name('dashboard');
+    Route::post('/set-language', [CIndex::class, 'setLanguage'])->name('set-language');
 
     // Master Data
     Route::prefix('master-data')->name('master-data.')->group(function () {

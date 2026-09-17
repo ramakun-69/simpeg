@@ -72,6 +72,12 @@ export default function Navbar({ sidebarControl, mobileMenuControl, sidebarActiv
                                     </button>
                                 </>
                             )}
+                            {!hasAnyRole(['Administrator', 'Superadmin']) && (
+                                <Link href={route('dashboard')} className="d-flex align-items-center gap-2">
+                                    <Icon icon="mdi:home" />
+                                    <span>{t('Dashboard')}</span>
+                                </Link>
+                            )}
                             {/* <form className='navbar-search'>
                                 <input type='text' name='search' placeholder='Search' />
                                 <Icon icon='ion:search-outline' className='icon' />
