@@ -37,6 +37,7 @@ class CUser extends Controller
                 'username' => $user->username,
                 'name' => $user->name,
                 'email' => $user->email,
+                'phone' => $user?->employee?->phone,
                 'isAdmin' => $user->isApplicationAdmin($applicationCode),
             ]);
         });
