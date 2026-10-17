@@ -19,6 +19,10 @@ class EmployeeListResource extends JsonResource
             'username' => $this->user?->username ?? $this->nip,
             'name' => $this->user?->name ?? $this->name,
             'email' => $this->user?->email,
+            'nip' => $this->nip,
+            'phone' => $this->phone,
+            'position' => $this->position?->name,
+            'rank' => $this->rank?->name,
         ];
     }
 }
